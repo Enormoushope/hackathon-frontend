@@ -26,9 +26,10 @@ export const TradeDashboard = () => {
       try {
         // If itemId is "demo", redirect to first investment item
         if (itemId === 'demo') {
-          const allItems = await getItems({ query: '', investOnly: true });
-          if (allItems.length > 0) {
-            navigate(`/trade/${allItems[0].id}`, { replace: true });
+          const allItems = await getItems();
+          const investItems = allItems.filter(item => item.isInvestItem);
+          if (investItems.length > 0) {
+            navigate(`/trade/${investItems[0].id}`, { replace: true });
             return;
           }
         }
@@ -52,7 +53,7 @@ export const TradeDashboard = () => {
         }
         // Load related items in same product group
         if (mounted && found && found.productGroup) {
-          const allItems = await getItems({ query: '', investOnly: true });
+          const allItems = await getItems();
           const related = allItems.filter(i => 
             i.productGroup === found.productGroup && i.id !== found.id
           );

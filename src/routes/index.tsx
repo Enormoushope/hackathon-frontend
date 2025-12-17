@@ -1,9 +1,9 @@
 import { Routes, Route } from 'react-router-dom';
-import App from '@/src/App';
-import ItemsRoute from '@/features/items/routes/ItemsRoute';
-import CategoryAdmin from '@/features/items/routes/CategoryAdmin';
-import UserPage from '@/features/users/routes/UserPage';
-import SearchPage from '@/features/search/routes/SearchPage';
+import App from '../App';
+import { ItemsRoute } from '../features/items/routes/ItemsRoute';
+import CategoryAdmin from '../features/items/routes/CategoryAdmin';
+import UserPage from '../features/users/routes/UserPage';
+import SearchPage from '../features/search/routes/SearchPage';
 
 export default function RootRoutes() {
 	return (
