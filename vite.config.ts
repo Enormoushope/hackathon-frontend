@@ -10,22 +10,27 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'scheduler'],
+    exclude: []
+  },
   build: {
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
         manualChunks(id) {
           if (!id.includes('node_modules')) return;
 
-          // React dependencies - must include scheduler separately
-          if (id.includes('scheduler')) return 'vendor_react';
-          if (id.includes('react') || id.includes('react-dom')) return 'vendor_react';
+          // React and scheduler MUST be together
+          if (id.includes('scheduler') || id.includes('/react/') || id.includes('/react-dom/')) {
+            return 'vendor_react';
+          }
           
-          // Large libraries split into logical vendor chunks
+          // Large libraries split into chunks
           if (id.includes('recharts')) return 'vendor_recharts';
-          if (id.includes('@tanstack') || id.includes('react-query')) return 'vendor_tanstack';
-          if (id.includes('@rainbow-me') || id.includes('wagmi') || id.includes('viem') || id.includes('wallet') || id.includes('coinbase')) return 'vendor_wallet';
+          if (id.includes('@tanstack')) return 'vendor_tanstack';
 
-          // Fallback for other node_modules
+          // Fallback
           return 'vendor_misc';
         }
       }

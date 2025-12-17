@@ -5,10 +5,10 @@ import './index.css';
 
 // Polyfill for React Scheduler - ensure performance.unstable_now is defined
 if (typeof performance === 'undefined') {
-  globalThis.performance = {} as any;
+  (globalThis as any).performance = {} as any;
 }
-if (!performance.unstable_now) {
-  performance.unstable_now = () => Date.now();
+if (!(performance as any).unstable_now) {
+  (performance as any).unstable_now = () => Date.now();
 }
 
 // QueryClient remains eager (small) so react-query hooks work immediately.
