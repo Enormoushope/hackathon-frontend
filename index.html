@@ -7,6 +7,14 @@
     <title>frontend</title>
   </head>
   <body>
+    <script>
+      if (typeof performance === 'undefined') {
+        globalThis.performance = {};
+      }
+      if (typeof performance.unstable_now !== 'function') {
+        performance.unstable_now = () => Date.now();
+      }
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
