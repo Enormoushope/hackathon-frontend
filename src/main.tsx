@@ -3,6 +3,14 @@ import ReactDOM from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 
+// Polyfill for React Scheduler - ensure performance.unstable_now is defined
+if (typeof performance === 'undefined') {
+  globalThis.performance = {} as any;
+}
+if (!performance.unstable_now) {
+  performance.unstable_now = () => Date.now();
+}
+
 // QueryClient remains eager (small) so react-query hooks work immediately.
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 const queryClient = new QueryClient();
