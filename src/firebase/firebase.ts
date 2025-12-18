@@ -11,6 +11,16 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
+const missingKeys = Object.entries(firebaseConfig)
+  .filter(([, value]) => !value || String(value).includes('your_'))
+  .map(([key]) => key);
+
+if (missingKeys.length > 0) {
+  const message = `Missing Firebase env vars: ${missingKeys.join(', ')}. Set VITE_FIREBASE_* in Vercel project settings.`;
+  console.error(message);
+  throw new Error(message);
+}
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
