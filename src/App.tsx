@@ -108,7 +108,7 @@ const Home = () => {
   useEffect(() => {
     const loadCategories = async () => {
       try {
-        const res = await fetch('http://localhost:8081/api/categories');
+        const res = await fetch('https://hackathon-backend-993645924031.us-central1.run.app/api/categories');
         const data = await res.json();
         // 以前の動作に戻す（レスポンスが配列でない場合はローカル定義にフォールバック）
         if (Array.isArray(data) && data.length > 0) {
