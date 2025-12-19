@@ -19,19 +19,26 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          if (!id.includes('node_modules')) return;
-
-          // React and scheduler MUST be together
-          if (id.includes('scheduler') || id.includes('/react/') || id.includes('/react-dom/')) {
-            return 'vendor_react';
+          // 外部ライブラリ
+          if (id.includes('node_modules')) {
+            if (id.includes('scheduler') || id.includes('/react/') || id.includes('/react-dom/')) {
+              return 'vendor_react';
+            }
+            if (id.includes('axios')) {
+              return 'vendor_axios';
+            }
+            if (id.includes('recharts')) return 'vendor_recharts';
+            if (id.includes('@tanstack')) return 'vendor_tanstack';
+            return 'vendor_misc';
           }
-          
-          // Large libraries split into chunks
-          if (id.includes('recharts')) return 'vendor_recharts';
-          if (id.includes('@tanstack')) return 'vendor_tanstack';
-
-          // Fallback
-          return 'vendor_misc';
+          // 機能ごと分割
+          if (id.includes('/src/features/items/')) {
+            return 'items';
+          }
+          if (id.includes('/src/features/users/')) {
+            return 'users';
+          }
+          // 必要に応じて追加
         }
       }
     }
