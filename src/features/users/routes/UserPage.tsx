@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { apiClient } from '@/lib/axios';
 import { ReactionButtons } from '@/components/Reactions/ReactionButtons';
 
@@ -32,10 +32,10 @@ type ItemSummary = {
   imageUrl: string;
 };
 
-export default function UserPage() {
   const { id } = useParams();
   const userId = String(id);
   const [currentUserId, setCurrentUserId] = useState<string>('');
+  const navigate = useNavigate();
   const [tab, setTab] = useState<'followers' | 'following' | 'likes' | 'listings'>('followers');
   const [followers, setFollowers] = useState<FollowRecord[]>([]);
   const [following, setFollowing] = useState<FollowRecord[]>([]);
@@ -50,9 +50,13 @@ export default function UserPage() {
 
   useEffect(() => {
     // Get current user ID
-    const cuid = localStorage.getItem('userId') || '18oYncIdc3UuvZneYQQ4j2II23A2';
+    const cuid = localStorage.getItem('userId');
+    if (!cuid) {
+      navigate('/login');
+      return;
+    }
     setCurrentUserId(cuid);
-  }, []);
+  }, [navigate]);
 
   useEffect(() => {
     const load = async () => {

@@ -156,7 +156,7 @@ export const TradeDashboard = () => {
           <span className="bg-blue-600 text-xs px-2 py-1 rounded">倉庫保管・所有権取引</span>
         </div>
         <div className="text-2xl font-bold text-green-400">
-          ¥{item.price.toLocaleString()} 
+          ¥{item.price ? item.price.toLocaleString() : "0"} 
           <span className="text-sm text-gray-400 ml-2">+{(Math.random() * 20).toFixed(1)}%</span>
         </div>
       </header>
@@ -169,7 +169,7 @@ export const TradeDashboard = () => {
           {/* 価格表示 */}
           <div className="flex gap-2 mb-6 items-center">
             <div className="ml-auto text-2xl font-bold text-green-400">
-              ¥{currentPrice.toLocaleString()}
+              ¥{currentPrice ? currentPrice.toLocaleString() : "0"}
             </div>
           </div>
           
@@ -188,7 +188,7 @@ export const TradeDashboard = () => {
                       className="flex-shrink-0 px-3 py-2 bg-gray-800 hover:bg-gray-700 rounded text-xs border border-gray-600"
                     >
                       <div className="text-white font-semibold truncate w-32">{related.title}</div>
-                      <div className="text-green-400">¥{related.price.toLocaleString()}</div>
+                      <div className="text-green-400">¥{related.price ? related.price.toLocaleString() : "0"}</div>
                     </button>
                   ))}
                 </div>
