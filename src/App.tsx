@@ -394,7 +394,7 @@ const Home = () => {
 
                     <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3 pt-8">
                       <div className="text-white font-bold text-lg">
-                        ¥{item.price.toLocaleString()}
+                        ¥{typeof item.price === 'number' && !isNaN(item.price) ? item.price.toLocaleString() : '0'}
                       </div>
                     </div>
                   </div>
