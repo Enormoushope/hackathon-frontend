@@ -31,7 +31,7 @@ export const AdminDashboard = () => {
           console.error('Failed to fetch users:', err);
           return { data: [] };
         }),
-        apiClient.get('/api/items').catch(err => {
+        apiClient.get('/items').catch(err => {
           console.error('Failed to fetch items:', err);
           return { data: [] };
         }),
@@ -106,7 +106,7 @@ export const AdminDashboard = () => {
   const fetchItems = async () => {
     setLoading(true);
     try {
-      const response = await apiClient.get('/api/items');
+      const response = await apiClient.get('/items');
       const itemsData = Array.isArray(response.data) ? response.data : [];
       setItems(itemsData);
     } catch (error) {
@@ -120,7 +120,7 @@ export const AdminDashboard = () => {
   const fetchReports = async () => {
     setLoading(true);
     try {
-      const response = await apiClient.get('/api/admin/reports');
+      const response = await apiClient.get('/admin/reports');
       const reportsData = Array.isArray(response.data) ? response.data : [];
       setReports(reportsData);
       setStats(prev => ({ ...prev, activeReports: reportsData.length }));

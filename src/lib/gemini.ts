@@ -21,7 +21,7 @@ export const suggestPrice = async (
   currentDescription: string
 ): Promise<PriceSuggestion | null> => {
   try {
-    const response = await apiClient.post<PriceSuggestion>('/api/ai/suggest-price', {
+    const response = await apiClient.post<PriceSuggestion>('/ai/suggest-price', {
       title,
       condition,
       category,
@@ -42,7 +42,7 @@ export const suggestDescription = async (
   currentDescription: string
 ): Promise<DescriptionSuggestion | null> => {
   try {
-    const response = await apiClient.post<DescriptionSuggestion>('/api/ai/suggest-description', {
+    const response = await apiClient.post<DescriptionSuggestion>('/ai/suggest-description', {
       title,
       condition,
       category,
@@ -56,6 +56,6 @@ export const suggestDescription = async (
   }
 };
 export const suggestRiskAssessment = async (payload: any) => {
-  const res = await apiClient.post('/api/ai/risk-assessment', payload);
+  const res = await apiClient.post('/ai/risk-assessment', payload);
   return res.data as { risks: string[] };
 }
