@@ -256,7 +256,7 @@ export const UserProfile = () => {
 
           // 進行中チャットの商品: /api/conversations by user から itemId を収集
           try {
-            const convRes = await apiClient.get(`/conversations`, { params: { userId: currentUserId }});
+            const convRes = await apiClient.get(`/api/conversations`, { params: { userId: currentUserId }});
             const itemIds: string[] = Array.isArray(convRes.data) ? convRes.data.map((c: any) => c.itemId) : [];
             const chatItms = all.filter((it) => itemIds.includes(String(it.id)));
             if (mounted) setChatItems(chatItms);
@@ -642,7 +642,7 @@ export const UserProfile = () => {
                   }
                   setReportSubmitting(true);
                   try {
-                    await apiClient.post('/reports', {
+                    await apiClient.post('/api/reports', {
                       reportedUserId: seller.id,
                       reason: reportReason,
                       description: reportDescription,
