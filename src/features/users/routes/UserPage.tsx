@@ -26,8 +26,8 @@ type ItemSummary = {
   price: number;
   imageUrl: string;
 };
-import { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 // import { apiClient } from '@/lib/axios';
 import { ReactionButtons } from '@/components/Reactions/ReactionButtons';
 
@@ -36,13 +36,13 @@ import { ReactionButtons } from '@/components/Reactions/ReactionButtons';
   // 必要なstate・変数のみ残し、未使用は削除
 function UserPage() {
     const [tab, setTab] = useState<'followers' | 'following' | 'likes' | 'listings'>('followers');
-    const [followers, setFollowers] = useState<FollowRecord[]>([]);
-    const [following, setFollowing] = useState<FollowRecord[]>([]);
-    const [likes, setLikes] = useState<ReactionRecord[]>([]);
-    const [listings, setListings] = useState<ItemSummary[]>([]);
-    const [itemsById, setItemsById] = useState<Record<string, ItemSummary>>({});
-    const [usersById, setUsersById] = useState<Record<string, UserSummary>>({});
-    const [loading, setLoading] = useState(false);
+    const [followers] = useState<FollowRecord[]>([]);
+    const [following] = useState<FollowRecord[]>([]);
+    const [likes] = useState<ReactionRecord[]>([]);
+    const [listings] = useState<ItemSummary[]>([]);
+    const [itemsById] = useState<Record<string, ItemSummary>>({});
+    const [usersById] = useState<Record<string, UserSummary>>({});
+    const [loading] = useState(false);
     const [page, setPage] = useState(0);
     const limit = 20;
     const currentUserId = "";
