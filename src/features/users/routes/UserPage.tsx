@@ -1,8 +1,3 @@
-// import { useEffect, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
-// import { apiClient } from '@/lib/axios';
-import { ReactionButtons } from '@/components/Reactions/ReactionButtons';
-
 type FollowRecord = {
   id: string;
   followerId: string;
@@ -31,38 +26,26 @@ type ItemSummary = {
   price: number;
   imageUrl: string;
 };
+import { useEffect, useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
+// import { apiClient } from '@/lib/axios';
+import { ReactionButtons } from '@/components/Reactions/ReactionButtons';
 
-  const { id } = useParams();
-  const userId = String(id);
-  const [currentUserId, setCurrentUserId] = useState<string>('');
-  const navigate = useNavigate();
-  const [tab, setTab] = useState<'followers' | 'following' | 'likes' | 'listings'>('followers');
-  const [followers, setFollowers] = useState<FollowRecord[]>([]);
-  const [following, setFollowing] = useState<FollowRecord[]>([]);
-  const [likes, setLikes] = useState<ReactionRecord[]>([]);
-  const [listings, setListings] = useState<ItemSummary[]>([]);
-  const [itemsById, setItemsById] = useState<Record<string, ItemSummary>>({});
-  const [usersById, setUsersById] = useState<Record<string, UserSummary>>({});
-  const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(0);
-  const limit = 20;
-  const offset = page * limit;
+// 型定義は残し、state・変数宣言は関数内だけにする
+
+  // 必要なstate・変数のみ残し、未使用は削除
 function UserPage() {
-  // const { id } = useParams();
-  // const userId = String(id);
-  // const [currentUserId, setCurrentUserId] = useState<string>('');
-  // const navigate = useNavigate();
-  // const [tab, setTab] = useState<'followers' | 'following' | 'likes' | 'listings'>('followers');
-  // const [followers, setFollowers] = useState<FollowRecord[]>([]);
-  // const [following, setFollowing] = useState<FollowRecord[]>([]);
-  // const [likes, setLikes] = useState<ReactionRecord[]>([]);
-  // const [listings, setListings] = useState<ItemSummary[]>([]);
-  // const [itemsById, setItemsById] = useState<Record<string, ItemSummary>>({});
-  // const [usersById, setUsersById] = useState<Record<string, UserSummary>>({});
-  // const [loading, setLoading] = useState(false);
-  // const [page, setPage] = useState(0);
-  // const limit = 20;
-  // const offset = page * limit;
+    const [tab, setTab] = useState<'followers' | 'following' | 'likes' | 'listings'>('followers');
+    const [followers, setFollowers] = useState<FollowRecord[]>([]);
+    const [following, setFollowing] = useState<FollowRecord[]>([]);
+    const [likes, setLikes] = useState<ReactionRecord[]>([]);
+    const [listings, setListings] = useState<ItemSummary[]>([]);
+    const [itemsById, setItemsById] = useState<Record<string, ItemSummary>>({});
+    const [usersById, setUsersById] = useState<Record<string, UserSummary>>({});
+    const [loading, setLoading] = useState(false);
+    const [page, setPage] = useState(0);
+    const limit = 20;
+    const currentUserId = "";
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
 

@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { apiClient } from '@/lib/axios';
-import type { Seller } from '../types';
+// import type { Seller } from '../types';
 
 export interface UpsertUserPayload {
   name: string;
