@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+// import { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { apiClient } from '@/lib/axios';
+// import { apiClient } from '@/lib/axios';
 import { ReactionButtons } from '@/components/Reactions/ReactionButtons';
 
 type FollowRecord = {
@@ -47,82 +47,24 @@ type ItemSummary = {
   const [page, setPage] = useState(0);
   const limit = 20;
   const offset = page * limit;
-
-  useEffect(() => {
-    // Get current user ID
-    const cuid = localStorage.getItem('userId');
-    if (!cuid) {
-      navigate('/login');
-      return;
-    }
-    setCurrentUserId(cuid);
-  }, [navigate]);
-
-  useEffect(() => {
-    const load = async () => {
-      setLoading(true);
-      try {
-        // Followers (who follows this user)
-        const f1 = await apiClient.get(`/follows/followers/${userId}?limit=${limit}&offset=${offset}`);
-        setFollowers(f1.data.followers || []);
-        // Following (who this user follows)
-        const f2 = await apiClient.get(`/follows/following/${userId}?limit=${limit}&offset=${offset}`);
-        setFollowing(f2.data.following || []);
-        // Likes
-        const r1 = await apiClient.get(`/reactions/users/${userId}?limit=${limit}&offset=${offset}`);
-        setLikes(r1.data.reactions || []);
-
-        // Listings (items by this seller)
-        const l1 = await apiClient.get(`/items?sellerId=${userId}`);
-        const allItems = l1.data.items || [];
-        setListings(allItems.slice(offset, offset + limit));
-
-        // Preload user summaries for followers/following
-        const userIds = Array.from(new Set([
-          ...f1.data.followers?.map((r: FollowRecord) => r.followerId) || [],
-          ...f1.data.followers?.map((r: FollowRecord) => r.followeeId) || [],
-          ...f2.data.following?.map((r: FollowRecord) => r.followerId) || [],
-          ...f2.data.following?.map((r: FollowRecord) => r.followeeId) || [],
-        ])).filter(Boolean);
-        const summaries: Record<string, UserSummary> = { ...usersById };
-        for (const uid of userIds) {
-          if (!summaries[uid]) {
-            try {
-              const res = await apiClient.get(`/users/${uid}`);
-              const u = res.data.user;
-              summaries[uid] = { id: u.id, name: u.name, avatarUrl: u.avatarUrl, rating: u.rating };
-            } catch {}
-          }
-        }
-        setUsersById(summaries);
-
-        // Preload item summaries for likes
-        const itemIds = Array.from(new Set(likes.map((r) => r.itemId)));
-        const itemsMap: Record<string, ItemSummary> = { ...itemsById };
-        for (const itemId of itemIds) {
-          if (!itemsMap[itemId]) {
-            try {
-              const res = await apiClient.get(`/items/${itemId}`);
-              const it = res.data.item;
-              itemsMap[itemId] = { id: it.id, title: it.title, price: it.price, imageUrl: it.imageUrl };
-            } catch {}
-          }
-        }
-        setItemsById(itemsMap);
-      } finally {
-        setLoading(false);
-      }
-    };
-    load();
-  }, [userId, page]);
-
+function UserPage() {
+  // const { id } = useParams();
+  // const userId = String(id);
+  // const [currentUserId, setCurrentUserId] = useState<string>('');
+  // const navigate = useNavigate();
+  // const [tab, setTab] = useState<'followers' | 'following' | 'likes' | 'listings'>('followers');
+  // const [followers, setFollowers] = useState<FollowRecord[]>([]);
+  // const [following, setFollowing] = useState<FollowRecord[]>([]);
+  // const [likes, setLikes] = useState<ReactionRecord[]>([]);
+  // const [listings, setListings] = useState<ItemSummary[]>([]);
+  // const [itemsById, setItemsById] = useState<Record<string, ItemSummary>>({});
+  // const [usersById, setUsersById] = useState<Record<string, UserSummary>>({});
+  // const [loading, setLoading] = useState(false);
+  // const [page, setPage] = useState(0);
+  // const limit = 20;
+  // const offset = page * limit;
   return (
     <div className="min-h-screen bg-gray-50 pb-20">
-      <header className="bg-white p-4 shadow-sm flex items-center gap-4 sticky top-0 z-10">
-        <Link to="/" className="text-gray-500 font-bold">←</Link>
-        <h1 className="font-bold text-lg">ユーザページ</h1>
-        <div className="ml-3 text-sm text-gray-500">ユーザID: {userId}</div>
-      </header>
 
       <main className="max-w-md mx-auto p-4 space-y-6">
         {/* Tabs */}
@@ -151,9 +93,9 @@ type ItemSummary = {
                 {followers.length === 0 ? (
                   <div className="text-sm text-gray-600">フォロワーはいません。</div>
                 ) : (
-                  followers.map((rec) => {
+                  followers.map((rec: FollowRecord) => {
                     const u = usersById[rec.followerId];
-                    const isMutual = following.some((f) => f.followeeId === rec.followerId);
+                    const isMutual = following.some((f: FollowRecord) => f.followeeId === rec.followerId);
                     return (
                       <div key={rec.id} className="flex items-center gap-3 p-2 border rounded-lg">
                         <Link to={`/users/${rec.followerId}`} className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
@@ -179,9 +121,9 @@ type ItemSummary = {
                 {following.length === 0 ? (
                   <div className="text-sm text-gray-600">フォローしているユーザはいません。</div>
                 ) : (
-                  following.map((rec) => {
+                  following.map((rec: FollowRecord) => {
                     const u = usersById[rec.followeeId];
-                    const isMutual = followers.some((f) => f.followerId === rec.followeeId);
+                    const isMutual = followers.some((f: FollowRecord) => f.followerId === rec.followeeId);
                     return (
                       <div key={rec.id} className="flex items-center gap-3 p-2 border rounded-lg">
                         <Link to={`/users/${rec.followeeId}`} className="w-10 h-10 rounded-full overflow-hidden bg-gray-200 flex-shrink-0">
@@ -207,7 +149,7 @@ type ItemSummary = {
                 {likes.length === 0 ? (
                   <div className="text-sm text-gray-600">まだ「いいね」した商品はありません。</div>
                 ) : (
-                  likes.map((r) => {
+                  likes.map((r: ReactionRecord) => {
                     const it = itemsById[r.itemId];
                     return (
                       <Link key={r.id} to={`/items/${r.itemId}`} className="border rounded-lg overflow-hidden block hover:shadow-md transition">
@@ -229,7 +171,7 @@ type ItemSummary = {
                 {listings.length === 0 ? (
                   <div className="text-sm text-gray-600">出品商品はありません。</div>
                 ) : (
-                  listings.map((it) => (
+                  listings.map((it: ItemSummary) => (
                     <div key={it.id} className="border rounded-lg overflow-hidden hover:shadow-md transition p-3 flex gap-3">
                       <Link to={`/items/${it.id}`} className="flex-1 flex gap-3">
                         <img src={it.imageUrl ?? `https://picsum.photos/seed/${it.id}/200/160`} alt={it.title} className="w-20 h-20 object-cover rounded" />
@@ -250,7 +192,7 @@ type ItemSummary = {
           {/* Pagination Controls */}
           <div className="flex items-center justify-between p-3 border-t">
             <button
-              onClick={() => setPage((p) => Math.max(0, p - 1))}
+              onClick={() => setPage((p: number) => Math.max(0, p - 1))}
               disabled={page === 0}
               className="px-4 py-2 bg-gray-200 text-gray-700 rounded disabled:opacity-50"
             >
@@ -258,7 +200,7 @@ type ItemSummary = {
             </button>
             <div className="text-sm text-gray-600">ページ {page + 1}</div>
             <button
-              onClick={() => setPage((p) => p + 1)}
+              onClick={() => setPage((p: number) => p + 1)}
               disabled={(tab === 'followers' && followers.length < limit) || (tab === 'following' && following.length < limit) || (tab === 'likes' && likes.length < limit) || (tab === 'listings' && listings.length < limit)}
               className="px-4 py-2 bg-gray-200 text-gray-700 rounded disabled:opacity-50"
             >
@@ -269,4 +211,6 @@ type ItemSummary = {
       </main>
     </div>
   );
+
 }
+export default UserPage;
