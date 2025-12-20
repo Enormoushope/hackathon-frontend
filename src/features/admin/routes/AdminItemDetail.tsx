@@ -29,7 +29,7 @@ export const AdminItemDetail = () => {
         }
 
         // 商品情報を取得
-        const itemRes = await apiClient.get(`/items/${itemId}`);
+        const itemRes = await apiClient.get(`/api/items/${itemId}`);
         setItem(itemRes.data);
 
         // 出品者情報を取得

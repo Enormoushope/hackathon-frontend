@@ -58,9 +58,9 @@ export const UserProfile = () => {
       setError(null);
       let s: Seller | null = null;
       
-      // 自分のプロフィールの場合は /auth/me を使用、他人の場合は /users/{id}
+      // 自分のプロフィールの場合は /api/auth/me を使用、他人の場合は /api/users/{id}
       if (isOwnProfile) {
-        console.log('[UserProfile] Fetching own profile via /auth/me');
+        console.log('[UserProfile] Fetching own profile via /api/auth/me');
         try {
           s = await fetchCurrentUser();
           console.log('[UserProfile] fetchCurrentUser result:', s);
@@ -159,7 +159,7 @@ export const UserProfile = () => {
         try {
           const targetUserId = isOwnProfile ? currentUserId : urlUserId;
           if (targetUserId) {
-            const reactionsRes = await apiClient.get(`/reactions/users/${targetUserId}`);
+            const reactionsRes = await apiClient.get(`/api/reactions/users/${targetUserId}`);
             const reactions: any[] = reactionsRes?.data?.reactions ?? [];
 
             const likedIds: string[] = reactions
@@ -197,7 +197,7 @@ export const UserProfile = () => {
           // 取引履歴から購入済み・倉庫保管（投資）を分類
           try {
             console.log('[UserProfile] Fetching transactions for:', currentUserId);
-            const txRes = await apiClient.get(`/transactions/user/${currentUserId}`).catch((err) => {
+            const txRes = await apiClient.get(`/api/transactions/user/${currentUserId}`).catch((err) => {
               console.error('[UserProfile] Transaction fetch error:', err);
               return { data: [] };
             });
@@ -263,9 +263,9 @@ export const UserProfile = () => {
           } catch {}
         }
 
-        // フォロワー数を動的計算（全ユーザー対象）：/follows/followers/:userId から計算
+        // フォロワー数を動的計算（全ユーザー対象）：/api/follows/followers/:userId から計算
         try {
-          const followersRes = await apiClient.get(`/follows/followers/${urlUserId}`);
+          const followersRes = await apiClient.get(`/api/follows/followers/${urlUserId}`);
           // レスポンスは {"followers": [...]} の構造
           const followersData = followersRes.data?.followers ? followersRes.data.followers : [];
           if (mounted) {
@@ -276,15 +276,15 @@ export const UserProfile = () => {
           if (mounted && seller) setFollowerCount(seller.followerCount ?? 0);
         }
 
-        // ☆平均値を動的計算（全ユーザー対象）：取引数>0の場合のみ。/reviews/user/:userId から該当ユーザーへのレビューを集計
+        // ☆平均値を動的計算（全ユーザー対象）：取引数>0の場合のみ。/api/reviews/user/:userId から該当ユーザーへのレビューを集計
         try {
           // 取引数を確認
-          const txRes = await apiClient.get(`/transactions/user/${urlUserId}`).catch(() => ({ data: [] }));
+          const txRes = await apiClient.get(`/api/transactions/user/${urlUserId}`).catch(() => ({ data: [] }));
           const userTransactions = Array.isArray(txRes.data) ? txRes.data : [];
           
           if (userTransactions.length > 0) {
             // 取引がある場合のみレビューを取得
-            const reviewsRes = await apiClient.get(`/reviews/user/${urlUserId}`);
+            const reviewsRes = await apiClient.get(`/api/reviews/user/${urlUserId}`);
             const userReviews = Array.isArray(reviewsRes.data) ? reviewsRes.data : [];
             const avgRating = userReviews.length > 0 
               ? userReviews.reduce((sum: number, r: any) => sum + (r.rating || 0), 0) / userReviews.length 
