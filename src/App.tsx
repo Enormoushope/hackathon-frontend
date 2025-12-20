@@ -367,7 +367,7 @@ const Home = () => {
             console.log('[Home RENDER] About to map', items.length, 'items');
             return items.map((item) => (
               <div key={item.id} className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 group relative border border-gray-100">
-                {/* 投資判定は現在モックにないため price 等で簡易判断（例: isInvestItem フィールドがあればそちらを優先） */}
+
                 <Link to={(item as any).isInvestItem ? `/trade/${item.id}` : `/purchase/${item.id}`}>
                   <div className="aspect-square bg-gray-100 relative overflow-hidden">
                     <img 

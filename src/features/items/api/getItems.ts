@@ -2,9 +2,10 @@ import type { Item } from '../types';
 import { apiClient } from '../../../lib/axios';
 
 
+
 export const getItems = async (url?: string): Promise<Item[]> => {
   try {
-    const endpoint = url || '/api/items';
+    const endpoint = url || '/items';
     console.log('[getItems] Calling API endpoint:', endpoint);
     const response = await apiClient.get<any[]>(endpoint);
     console.log('[getItems] API response:', response.data);
@@ -22,10 +23,11 @@ export const getItems = async (url?: string): Promise<Item[]> => {
 };
 
 
+
 export const getItemById = async (id: string | undefined): Promise<Item | null> => {
   if (!id) return null;
   try {
-    const response = await apiClient.get<any>(`/api/items/${id}`);
+    const response = await apiClient.get<any>(`/items/${id}`);
     const item = response.data;
     return {
       ...item,
@@ -39,9 +41,10 @@ export const getItemById = async (id: string | undefined): Promise<Item | null> 
   }
 };
 
+
 export const incrementItemViewCount = async (id: string): Promise<Item | null> => {
   try {
-    const response = await apiClient.post<Item>(`/api/items/${id}/increment-view`);
+    const response = await apiClient.post<Item>(`/items/${id}/increment-view`);
     return response.data;
   } catch (error) {
     console.error(`Failed to increment view count for item ${id}:`, error);
