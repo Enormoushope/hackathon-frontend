@@ -1,9 +1,9 @@
 import axios from 'axios';
 import { auth } from '@/firebase/firebase';
 
-const baseURLRaw = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8081';
-// Ensure we always hit the /api prefix even if the env var omits it
-const baseURL = baseURLRaw.endsWith('/api') ? baseURLRaw : `${baseURLRaw.replace(/\/$/, '')}/api`;
+
+// baseURLは環境変数の値をそのまま使う（/api自動付与しない）
+const baseURL = import.meta.env.VITE_API_BASE_URL ?? 'http://localhost:8081';
 
 export const apiClient = axios.create({
   baseURL,
