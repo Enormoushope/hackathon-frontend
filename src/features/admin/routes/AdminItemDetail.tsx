@@ -103,7 +103,7 @@ export const AdminItemDetail = () => {
           <div className="bg-white rounded-xl shadow-lg overflow-hidden">
             <img
               src={item.imageUrl}
-              alt={item.title}
+              alt={item.name}
               className="w-full h-96 object-cover"
             />
             <div className="p-4 bg-gray-100">
@@ -115,7 +115,7 @@ export const AdminItemDetail = () => {
           <div className="space-y-6">
             {/* 商品情報 */}
             <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-3xl font-bold mb-4">{item.title}</h2>
+              <h2 className="text-3xl font-bold mb-4">{item.name}</h2>
 
               <div className="space-y-4 mb-6 border-b border-gray-200 pb-6">
                 <div>

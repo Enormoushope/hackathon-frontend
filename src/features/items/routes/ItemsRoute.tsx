@@ -89,9 +89,9 @@ export const ItemsRoute = () => {
       
       const keywords = getCategoryKeywords(categoryInfo.label);
       
-      // Filter by matching title with keywords
+      // Filter by matching name with keywords
       const filtered = allItems.filter((item) => {
-        return keywords.some(keyword => item.title.includes(keyword));
+        return keywords.some(keyword => item.itemname && item.itemname.includes(keyword));
       });
       setItems(filtered);
     }
@@ -142,7 +142,7 @@ export const ItemsRoute = () => {
             {categories.map((cat) => {
               const keywords = getCategoryKeywords(cat.label);
               const count = allItems.filter((item) => 
-                keywords.some(keyword => item.title.includes(keyword))
+                keywords.some(keyword => item.itemname && item.itemname.includes(keyword))
               ).length;
               
               if (count === 0) return null;

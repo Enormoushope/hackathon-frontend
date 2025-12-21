@@ -36,7 +36,7 @@ export interface InvestmentAsset {
 // 出品フォーム（フロントエンド用）
 export interface ListingFormData {
   // 基本情報
-  title: string; // 商品名 (40文字程度)
+  name: string; // 商品名 (40文字程度)
   description: string; // 商品説明 (1000文字程度)
   categoryId: string; // カテゴリID
   condition: 'new' | 'good' | 'fair' | 'poor'; // 商品状態
@@ -58,8 +58,7 @@ export interface ListingFormData {
 }
 
 // 出品API用データ（バックエンド送信用）
-export interface CreateItemRequest {
-  title: string;
+  name: string;
   description: string;
   price: number;
   categoryId: string;

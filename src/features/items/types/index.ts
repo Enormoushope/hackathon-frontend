@@ -1,6 +1,6 @@
 export type Item = {
   id: string;
-  title: string;
+  itemname: string;
   price: number;
   imageUrl: string;
   imageUrls?: string[];

@@ -22,7 +22,7 @@ type ReactionRecord = {
 
 type ItemSummary = {
   id: string;
-  title: string;
+  name: string;
   price: number;
   imageUrl: string;
 };
@@ -136,9 +136,9 @@ function UserPage() {
                     const it = itemsById[r.itemId];
                     return (
                       <Link key={r.id} to={`/items/${r.itemId}`} className="border rounded-lg overflow-hidden block hover:shadow-md transition">
-                        <img src={it?.imageUrl ?? `https://picsum.photos/seed/${r.itemId}/200/160`} alt={it?.title ?? r.itemId} className="w-full h-24 object-cover" />
+                        <img src={it?.imageUrl ?? `https://picsum.photos/seed/${r.itemId}/200/160`} alt={it?.name ?? r.itemId} className="w-full h-24 object-cover" />
                         <div className="p-2">
-                          <div className="font-bold text-sm line-clamp-2">{it?.title ?? r.itemId}</div>
+                          <div className="font-bold text-sm line-clamp-2">{it?.name ?? r.itemId}</div>
                           <div className="text-xs text-gray-600 mt-1">¥{(it?.price ?? 0).toLocaleString()}</div>
                           <div className="text-[11px] text-gray-500 mt-1">リアクション: {r.reactionType} / {new Date(r.createdAt).toLocaleDateString()}</div>
                         </div>
@@ -157,9 +157,9 @@ function UserPage() {
                   listings.map((it: ItemSummary) => (
                     <div key={it.id} className="border rounded-lg overflow-hidden hover:shadow-md transition p-3 flex gap-3">
                       <Link to={`/items/${it.id}`} className="flex-1 flex gap-3">
-                        <img src={it.imageUrl ?? `https://picsum.photos/seed/${it.id}/200/160`} alt={it.title} className="w-20 h-20 object-cover rounded" />
+                        <img src={it.imageUrl ?? `https://picsum.photos/seed/${it.id}/200/160`} alt={it.name} className="w-20 h-20 object-cover rounded" />
                         <div className="flex-1">
-                          <div className="font-bold text-sm line-clamp-2">{it.title}</div>
+                          <div className="font-bold text-sm line-clamp-2">{it.name}</div>
                           <div className="text-xs text-gray-600 mt-1">¥{it.price.toLocaleString()}</div>
                         </div>
                       </Link>

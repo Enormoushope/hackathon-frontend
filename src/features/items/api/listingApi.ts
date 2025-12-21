@@ -12,7 +12,7 @@ export const createListing = async (formData: ListingFormData, sellerId: string)
     );
 
     const request: CreateItemRequest = {
-      title: formData.title,
+      name: formData.name,
       description: formData.description,
       price: formData.price,
       categoryId: formData.categoryId,

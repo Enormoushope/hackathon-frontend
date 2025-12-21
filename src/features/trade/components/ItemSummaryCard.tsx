@@ -11,10 +11,10 @@ export const ItemSummaryCard = ({ item }: Props) => {
     <div className="bg-white p-4 rounded-xl shadow-sm">
       <div className="flex gap-4">
         <div className="w-28 h-28 bg-gray-200 rounded-md overflow-hidden flex-shrink-0">
-          <img src={item.imageUrl} alt={item.title} className="w-full h-full object-cover" />
+          <img src={item.imageUrl} alt={item.name} className="w-full h-full object-cover" />
         </div>
         <div className="flex-1">
-          <h2 className="font-bold text-lg line-clamp-2">{item.title}</h2>
+          <h2 className="font-bold text-lg line-clamp-2">{item.name}</h2>
           <p className="font-bold text-2xl mt-3 text-red-500">¥{item.price.toLocaleString()}</p>
           {item.isSoldOut && <div className="mt-3 text-sm text-gray-500">この商品は既に販売済みです。</div>}
           {item.tags && item.tags.length > 0 && (
@@ -34,7 +34,7 @@ export const ItemSummaryCard = ({ item }: Props) => {
         <div className="flex gap-2 overflow-x-auto pb-2">
           {displayImages.map((url, idx) => (
             <div key={idx} className="w-24 h-24 rounded-md overflow-hidden border border-gray-200 flex-shrink-0 bg-gray-100">
-              <img src={url} alt={`${item.title}-${idx + 1}`} className="w-full h-full object-cover" />
+              <img src={url} alt={`${item.name}-${idx + 1}`} className="w-full h-full object-cover" />
             </div>
           ))}
         </div>

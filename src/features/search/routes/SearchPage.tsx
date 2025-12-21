@@ -5,7 +5,7 @@ import { CLASSIFICATION_TREE, type CategoryNode } from '@/features/items/types/c
 
 type SearchResult = {
   users: { id: string; name: string; avatarUrl?: string; rating?: number }[];
-  items: { id: string; title: string; price: number; imageUrl: string; sellerId?: string }[];
+  items: { id: string; name: string; price: number; imageUrl: string; sellerId?: string }[];
 };
 
 export default function SearchPage() {
@@ -149,9 +149,9 @@ export default function SearchPage() {
                 <div className="grid grid-cols-2 gap-3">
                   {results.items.map((it) => (
                     <Link key={it.id} to={`/items/${it.id}`} className="border rounded-lg overflow-hidden hover:shadow-md transition">
-                      <img src={it.imageUrl ?? `https://picsum.photos/seed/${it.id}/200/160`} alt={it.title} className="w-full h-24 object-cover" />
+                      <img src={it.imageUrl ?? `https://picsum.photos/seed/${it.id}/200/160`} alt={it.name} className="w-full h-24 object-cover" />
                       <div className="p-2">
-                        <div className="font-bold text-sm line-clamp-2">{it.title}</div>
+                        <div className="font-bold text-sm line-clamp-2">{it.name}</div>
                         <div className="text-xs text-gray-600 mt-1">¥{it.price.toLocaleString()}</div>
                       </div>
                     </Link>
