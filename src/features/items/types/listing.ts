@@ -55,6 +55,7 @@ export interface ListingFormData {
 
   // 投資・トレカ機能
   investment: InvestmentAsset;
+}
 
 // 出品API用データ（バックエンド送信用）
 export interface ListingApiData {
