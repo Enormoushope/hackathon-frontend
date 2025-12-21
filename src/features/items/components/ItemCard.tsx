@@ -12,7 +12,7 @@ export const ItemCard = ({ item }: Props) => {
     <Link
       to={to}
       className="group block relative border rounded-lg overflow-hidden shadow-sm hover:shadow-md transition bg-white focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-300"
-      aria-label={item.itemname}
+      aria-label={item.name}
     >
       {/* 画像エリア */}
       <div className="aspect-square w-full bg-gray-200 relative overflow-hidden">
@@ -20,7 +20,7 @@ export const ItemCard = ({ item }: Props) => {
         <div className="absolute inset-0 bg-gray-200 animate-pulse" aria-hidden={!item.imageUrl}></div>
         <img
           src={item.imageUrl}
-          alt={item.itemname}
+          alt={item.name}
           loading="lazy"
           className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
         />
@@ -44,7 +44,7 @@ export const ItemCard = ({ item }: Props) => {
       {/* 情報エリア */}
       <div className="p-3">
         <h3 className="text-sm font-medium text-gray-900 mb-1 line-clamp-2">
-          {item.itemname}
+          {item.name}
         </h3>
         <p className="text-lg font-bold text-indigo-600">¥{item.price.toLocaleString()}</p>
       </div>

@@ -23,7 +23,7 @@ export const CreateListing = () => {
   const [selectedMainCategoryId, setSelectedMainCategoryId] = useState(CATEGORY_TREE[0].code);
   
   const [formData, setFormData] = useState<ListingFormData>({
-    itemname: '',
+    name: '',
     description: '',
     categoryId: DEFAULT_CATEGORY_ID,
     condition: 'new',
@@ -52,8 +52,8 @@ export const CreateListing = () => {
   const [tagInput, setTagInput] = useState('');
   const [tagSuggestions, setTagSuggestions] = useState<string[]>([]);
     // タグサジェスト（タイトル・説明から抽出）
-    const suggestTags = (itemname: string, description: string): string[] => {
-      const text = `${itemname} ${description}`.toLowerCase();
+    const suggestTags = (name: string, description: string): string[] => {
+      const text = `${name} ${description}`.toLowerCase();
       const pairs: Array<[RegExp, string]> = [
         // トレカ
         [/(psa\s*10|bgs\s*black|graded|鑑定)/i, '鑑定品'],
@@ -88,8 +88,8 @@ export const CreateListing = () => {
     };
 
     useEffect(() => {
-      setTagSuggestions(suggestTags(formData.itemname, formData.description));
-    }, [formData.itemname, formData.description]);
+      setTagSuggestions(suggestTags(formData.name, formData.description));
+    }, [formData.name, formData.description]);
 
     const addTag = (t: string) => {
       const tag = t.trim();
@@ -186,10 +186,10 @@ export const CreateListing = () => {
 
   // タイトル変更で推奨カテゴリ更新
   useEffect(() => {
-    const code = suggestCategoryFromName(formData.itemname);
+    const code = suggestCategoryFromName(formData.name);
     setSuggestedCategoryCode(code);
     setShowCategorySuggestion(!!code && code !== formData.categoryId);
-  }, [formData.itemname, formData.categoryId]);
+  }, [formData.name, formData.categoryId]);
 
   const applySuggestedCategory = () => {
     if (!suggestedCategoryCode) return;
@@ -201,7 +201,7 @@ export const CreateListing = () => {
 
   // AIリスク判定(Gemini)を明示的に実行
   const handleRunRiskAssessment = async () => {
-    const ready = (formData.itemname?.trim().length || 0) > 0 && !!formData.categoryId && !!formData.condition && Number(formData.price) > 0;
+    const ready = (formData.name?.trim().length || 0) > 0 && !!formData.categoryId && !!formData.condition && Number(formData.price) > 0;
     if (!ready) {
       alert('商品名・カテゴリ・状態・価格を入力した後でリスク診断を実行してください');
       return;
@@ -220,7 +220,7 @@ export const CreateListing = () => {
             reader.readAsDataURL(file);
           });
           const result = await analyzeImage(base64);
-          imageDesc = `タイトル: ${result.itemname || '不明'}, カテゴリ: ${result.category || '不明'}, 状態: ${result.conditionComment || '不明'}`;
+          imageDesc = `タイトル: ${result.name || '不明'}, カテゴリ: ${result.category || '不明'}, 状態: ${result.conditionComment || '不明'}`;
           setImageAnalysisResult(imageDesc);
         } catch (err) {
           console.warn('Image analysis failed, proceeding without it:', err);
@@ -228,7 +228,7 @@ export const CreateListing = () => {
       }
       
       const payload = {
-        name: formData.itemname,
+        name: formData.name,
         category: findCategoryPathLabel(formData.categoryId),
         condition: formData.condition,
         description: formData.description,
@@ -342,11 +342,11 @@ export const CreateListing = () => {
         const result = await analyzeImage(base64);
         
         // Store image analysis result for risk assessment
-        const analysisDesc = `タイトル: ${result.itemname || '不明'}, カテゴリ: ${result.category || '不明'}, 状態: ${result.conditionComment || '不明'}`;
+        const analysisDesc = `タイトル: ${result.name || '不明'}, カテゴリ: ${result.category || '不明'}, 状態: ${result.conditionComment || '不明'}`;
         setImageAnalysisResult(analysisDesc);
         
-        if (result.itemname) {
-          setFormData((prev) => ({ ...prev, itemname: result.itemname || '' }));
+        if (result.name) {
+          setFormData((prev) => ({ ...prev, name: result.name || '' }));
         }
         if (result.conditionComment) {
           setFormData((prev) => ({ 
@@ -504,7 +504,7 @@ export const CreateListing = () => {
 
   // Gemini AI サジェスト取得
   const handleGetGeminiSuggestions = async () => {
-    if (!formData.itemname.trim()) {
+    if (!formData.name.trim()) {
       alert('商品名を入力してから、Geminiサジェストを取得してください');
       return;
     }
@@ -515,7 +515,7 @@ export const CreateListing = () => {
       
       // 価格サジェスト取得
       const priceResult = await suggestPrice(
-        formData.itemname,
+        formData.name,
         CONDITIONS.find(c => c.value === formData.condition)?.label || formData.condition,
         categoryLabel,
         formData.description
@@ -528,7 +528,7 @@ export const CreateListing = () => {
 
       // 説明文サジェスト取得
       const descResult = await suggestDescription(
-        formData.itemname,
+        formData.name,
         CONDITIONS.find(c => c.value === formData.condition)?.label || formData.condition,
         categoryLabel,
         formData.description
@@ -584,7 +584,7 @@ export const CreateListing = () => {
   // 不明瞭リスクの簡易診断（出品者向け）
   const evaluateListingWarnings = () => {
     const warnings: string[] = [];
-    if (!formData.itemname.trim() || formData.itemname.trim().length < 5) warnings.push('商品名が短すぎます（5文字以上推奨）');
+    if (!formData.name.trim() || formData.name.trim().length < 5) warnings.push('商品名が短すぎます（5文字以上推奨）');
     if (!formData.description.trim() || formData.description.trim().length < 20) warnings.push('説明が少ないです（20文字以上推奨）');
     // 説明が長いが要点が不明瞭
     if (formData.description.trim().length > 300) {
@@ -618,7 +618,7 @@ export const CreateListing = () => {
     // 多軸リスク評価（0 = 低リスク, 100 = 高リスク）
     const axes: { label: string; score: number; hint?: string }[] = [];
     // 1) 情報明瞭性
-    const nameLen = formData.itemname.trim().length;
+    const nameLen = formData.name.trim().length;
     const descLen = formData.description.trim().length;
     const hasStructure = /\n[-*・]/.test(formData.description) || /\n\d+\./.test(formData.description) || /\n\n/.test(formData.description);
     let clarityRisk = 0;
@@ -650,7 +650,7 @@ export const CreateListing = () => {
       }
     } else {
       const tol = formData.price < 10000 ? 0.15 : formData.price < 50000 ? 0.25 : 0.35;
-      const isInvestLike = /(PSA|BGS|鑑定|投資|プロモ)/i.test(formData.itemname + ' ' + formData.description);
+      const isInvestLike = /(PSA|BGS|鑑定|投資|プロモ)/i.test(formData.name + ' ' + formData.description);
       const ref = isInvestLike ? 40000 : 8000;
       const lower = ref * (1 - tol);
       const upper = ref * (1 + tol);
@@ -675,7 +675,7 @@ export const CreateListing = () => {
     const categorySignal = /(カメラ|本|トレカ|カード|衣類|ゲーム|PC|Mac|ノート)/i;
     let categoryRisk = 35;
     if (hasCategory) categoryRisk -= 15;
-    if (categorySignal.test(formData.itemname + ' ' + formData.description)) categoryRisk -= 10;
+    if (categorySignal.test(formData.name + ' ' + formData.description)) categoryRisk -= 10;
     axes.push({ label: 'カテゴリ適合', score: Math.max(0, categoryRisk), hint: '選択カテゴリと記述の一致' });
 
     setRiskAxes(axes);
@@ -688,12 +688,12 @@ export const CreateListing = () => {
   useEffect(() => {
     evaluateListingWarnings();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [formData.itemname, formData.description, formData.categoryId, formData.condition, formData.price, selectedFiles.length, priceSuggestion]);
+  }, [formData.name, formData.description, formData.categoryId, formData.condition, formData.price, selectedFiles.length, priceSuggestion]);
 
   const handleSubmit = async (e?: React.FormEvent) => {
     e?.preventDefault();
     
-    if (!formData.itemname.trim()) {
+    if (!formData.name.trim()) {
       alert('商品名を入力してください');
       return;
     }
@@ -756,12 +756,12 @@ export const CreateListing = () => {
               <input
                 type="text"
                 maxLength={40}
-                value={formData.itemname}
-                onChange={(e) => setFormData({ ...formData, itemname: e.target.value })}
+                value={formData.name}
+                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 placeholder="商品名を入力（40文字以内）"
                 className="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
-              <p className="text-xs text-gray-500 mt-1">{formData.itemname.length}/40文字</p>
+              <p className="text-xs text-gray-500 mt-1">{formData.name.length}/40文字</p>
             </div>
           </section>
 
@@ -887,7 +887,7 @@ export const CreateListing = () => {
               <button
                 type="button"
                 onClick={handleGetGeminiSuggestions}
-                disabled={isGeminiLoading || !formData.itemname.trim()}
+                disabled={isGeminiLoading || !formData.name.trim()}
                 className="px-3 py-1 bg-blue-500 text-white text-sm rounded-full font-bold hover:bg-blue-600 transition disabled:bg-gray-400 flex items-center gap-1"
               >
                 {isGeminiLoading ? (<><span className="animate-spin">⏳</span> 生成中</>) : (<>✨ サジェスト取得</>)}

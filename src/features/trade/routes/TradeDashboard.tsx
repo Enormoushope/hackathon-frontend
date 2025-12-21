@@ -152,7 +152,7 @@ export const TradeDashboard = () => {
       <header className="border-b border-gray-700 p-4 flex justify-between items-center bg-gray-800">
         <div className="flex items-center gap-4">
           <button onClick={() => navigate(-1)} className="text-gray-400 hover:text-white">← 戻る</button>
-          <h1 className="text-xl font-bold line-clamp-1">{item.itemname}</h1>
+          <h1 className="text-xl font-bold line-clamp-1">{item.name}</h1>
           <span className="bg-blue-600 text-xs px-2 py-1 rounded">倉庫保管・所有権取引</span>
         </div>
         <div className="text-2xl font-bold text-green-400">
@@ -187,7 +187,7 @@ export const TradeDashboard = () => {
                       onClick={() => navigate(`/trade/${related.id}`)}
                       className="flex-shrink-0 px-3 py-2 bg-gray-800 hover:bg-gray-700 rounded text-xs border border-gray-600"
                     >
-                      <div className="text-white font-semibold truncate w-32">{related.itemname}</div>
+                      <div className="text-white font-semibold truncate w-32">{related.name}</div>
                       <div className="text-green-400">¥{related.price ? related.price.toLocaleString() : "0"}</div>
                     </button>
                   ))}

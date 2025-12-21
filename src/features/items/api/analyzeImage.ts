@@ -1,6 +1,7 @@
 import { apiClient } from '../../../lib/axios';
 
 export interface AnalyzeImageResponse {
+  name?: string;
   title?: string;
   category?: string;
   conditionComment?: string;

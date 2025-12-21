@@ -1,6 +1,6 @@
 export type Seller = {
   id: string;
-  username: string;
+  name: string;
   avatarUrl?: string;
   bio?: string;
   rating?: number; // 0-5

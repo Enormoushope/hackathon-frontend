@@ -12,7 +12,7 @@ export const getItems = async (url?: string): Promise<Item[]> => {
     // user_id→sellerId, image_url→imageUrl, is_sold→isSoldOut へ変換
     return response.data.map(item => ({
       ...item,
-      itemname: item.itemname || item.name || '',
+      name: item.name || item.name || '',
       sellerId: item.sellerId || item.user_id,
       imageUrl: item.imageUrl || item.image_url,
       isSoldOut: typeof item.isSoldOut !== 'undefined' ? item.isSoldOut : !!item.is_sold,
@@ -32,7 +32,7 @@ export const getItemById = async (id: string | undefined): Promise<Item | null> 
     const item = response.data;
     return {
       ...item,
-      itemname: item.itemname || item.name || '',
+      name: item.name || item.name || '',
       sellerId: item.sellerId || item.user_id,
       imageUrl: item.imageUrl || item.image_url,
       isSoldOut: typeof item.isSoldOut !== 'undefined' ? item.isSoldOut : !!item.is_sold,

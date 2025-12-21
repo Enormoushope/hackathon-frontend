@@ -3,7 +3,7 @@ import { apiClient } from '@/lib/axios';
 // import type { Seller } from '../types';
 
 export interface UpsertUserPayload {
-  username: string;
+  name: string;
   avatarUrl?: string;
   bio?: string;
 }
@@ -12,7 +12,7 @@ export interface UpsertUserPayload {
 import type { Seller } from '../types';
 const mapSeller = (user: any): Seller => ({
   id: user.id,
-  username: user.username || user.name,
+  name: user.name || user.name,
   avatarUrl: user.avatarUrl || user.avatar_url,
   bio: user.bio,
   rating: user.rating,

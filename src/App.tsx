@@ -373,7 +373,7 @@ const Home = () => {
                   <div className="aspect-square bg-gray-100 relative overflow-hidden">
                     <img 
                       src={item.imageUrl} 
-                       alt={item.itemname} 
+                       alt={item.name} 
                       className="w-full h-full object-cover group-hover:scale-110 transition duration-500"
                       loading="lazy"
                     />
@@ -403,7 +403,7 @@ const Home = () => {
 
                 <div className="p-3">
                   <h4 className="text-xs text-gray-500 line-clamp-2 min-h-[2.5em] mb-2 leading-relaxed font-medium">
-                     {item.itemname}
+                     {item.name}
                   </h4>
                   {/* 出品者評価（平均） */}
                   <div className="text-[11px] text-yellow-600 mb-1">

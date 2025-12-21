@@ -4,7 +4,7 @@ import { apiClient } from '../../../lib/axios';
 
 const mapSeller = (user: any): Seller => ({
   id: user.id,
-  username: user.username || user.name || '',
+  name: user.name || user.name || '',
   avatarUrl: user.avatarUrl || user.avatar_url,
   bio: user.bio,
   rating: user.rating,

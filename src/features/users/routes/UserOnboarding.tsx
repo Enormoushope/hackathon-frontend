@@ -7,7 +7,7 @@ import { useAuth } from '@/hooks/useAuth';
 export const UserOnboarding = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [username, setUsername] = useState(user?.displayName ?? '');
+  const [name, setUsername] = useState(user?.displayName ?? '');
   const [avatarUrl, setAvatarUrl] = useState(user?.photoURL ?? '');
   const [bio, setBio] = useState('');
   const [error, setError] = useState('');
@@ -42,14 +42,14 @@ export const UserOnboarding = () => {
     e.preventDefault();
     setError('');
 
-    if (!username.trim()) {
+    if (!name.trim()) {
       setError('表示名を入力してください');
       return;
     }
 
     setSubmitting(true);
     try {
-      await upsertCurrentUser({ username: username.trim(), avatarUrl: avatarUrl.trim() || undefined, bio: bio.trim() || undefined });
+      await upsertCurrentUser({ name: name.trim(), avatarUrl: avatarUrl.trim() || undefined, bio: bio.trim() || undefined });
       navigate('/');
     } catch (err) {
       if (axios.isAxiosError(err)) {
@@ -91,7 +91,7 @@ export const UserOnboarding = () => {
             <label className="block text-sm font-semibold text-gray-700 mb-2">表示名 *</label>
             <input
               type="text"
-              value={username}
+              value={name}
               onChange={(e) => setUsername(e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="例) TCG_master"

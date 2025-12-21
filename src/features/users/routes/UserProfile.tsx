@@ -80,7 +80,7 @@ export const UserProfile = () => {
               const displayName = currentUser?.displayName || 'ユーザー';
               const photoURL = currentUser?.photoURL || '';
               await upsertCurrentUser({ 
-                username: displayName, 
+                name: displayName, 
                 avatarUrl: photoURL || undefined, 
                 bio: '' 
               });
@@ -116,7 +116,7 @@ export const UserProfile = () => {
             console.warn('[UserProfile] No seller data, creating minimal user object for:', urlUserId);
             s = {
               id: String(urlUserId),
-              username: String(urlUserId),
+              name: String(urlUserId),
               bio: '',
               avatarUrl: '',
               sellingCount: 0,
@@ -129,7 +129,7 @@ export const UserProfile = () => {
           // エラー時もミニマルオブジェクトを作成
           s = {
             id: String(urlUserId),
-            username: String(urlUserId),
+            name: String(urlUserId),
             bio: '',
             avatarUrl: '',
             sellingCount: 0,
@@ -213,7 +213,7 @@ export const UserProfile = () => {
               // トランザクションレスポンスから商品情報を構築（sold out 商品も含む）
               const item = {
                 id: tx.itemId,
-                itemname: tx.itemTitle || 'タイトル不明',
+                name: tx.itemTitle || 'タイトル不明',
                 price: tx.price,
                 imageUrl: tx.itemImageUrl || '',
                 isSoldOut: true, // 購入済み商品は必ず sold out
@@ -375,12 +375,12 @@ export const UserProfile = () => {
         {/* プロフィールカード */}
         <div className="bg-white rounded-2xl p-6 shadow-sm mb-8 flex flex-col sm:flex-row items-center sm:items-start gap-6">
           <img 
-            src={seller.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(seller.username)}&size=200`} 
-            alt={seller.username} 
+            src={seller.avatarUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(seller.name)}&size=200`} 
+            alt={seller.name} 
             className="w-24 h-24 rounded-full border-4 border-gray-100 shadow-md"
           />
           <div className="flex-1 text-center sm:text-left">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">{seller.username}</h1>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">{seller.name}</h1>
             <div className="text-sm text-gray-500">ID: {seller.id}</div>
             <div className="flex justify-center sm:justify-start gap-4 text-sm text-gray-600 mb-4">
               <span>出品数 <b>{seller.sellingCount ?? 0}</b></span>

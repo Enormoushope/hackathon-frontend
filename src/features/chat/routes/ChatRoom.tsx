@@ -105,13 +105,13 @@ export const ChatRoom = () => {
           </button>
           <img
             src={item.imageUrl}
-            alt={item.itemname}
+            alt={item.name}
             className="w-10 h-10 object-cover rounded"
           />
           <div>
-            <h2 className="font-semibold text-sm">{item.itemname}</h2>
+            <h2 className="font-semibold text-sm">{item.name}</h2>
             <p className="text-xs text-gray-500">
-              出品者: <Link to={`/users/${seller.id}`} className="text-indigo-600 hover:underline">{seller.username}</Link>
+              出品者: <Link to={`/users/${seller.id}`} className="text-indigo-600 hover:underline">{seller.name}</Link>
             </p>
           </div>
         </div>
