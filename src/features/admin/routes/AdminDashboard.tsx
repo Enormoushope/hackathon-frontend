@@ -570,9 +570,9 @@ export const AdminDashboard = () => {
                       to={detailUrl}
                       className="border border-gray-200 rounded-xl overflow-hidden hover:shadow-lg transition block"
                     >
-                      <img src={item.imageUrl} alt={item.name} className="w-full h-40 object-cover" />
+                      <img src={item.imageUrl} alt={item.itemname} className="w-full h-40 object-cover" />
                       <div className="p-3">
-                        <div className="font-bold text-sm mb-1 truncate">{item.name}</div>
+                        <div className="font-bold text-sm mb-1 truncate">{item.itemname}</div>
                         <div className="text-red-600 font-black text-lg">¥{item.price.toLocaleString()}</div>
                         <div className="text-xs text-gray-500 mt-1">ID: {item.id}</div>
                         {item.isSoldOut && (

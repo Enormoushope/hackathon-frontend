@@ -103,7 +103,7 @@ export const AdminItemDetail = () => {
           <div className="bg-white rounded-xl shadow-lg overflow-hidden">
             <img
               src={item.imageUrl}
-              alt={item.name}
+              alt={item.itemname}
               className="w-full h-96 object-cover"
             />
             <div className="p-4 bg-gray-100">
@@ -115,7 +115,7 @@ export const AdminItemDetail = () => {
           <div className="space-y-6">
             {/* 商品情報 */}
             <div className="bg-white rounded-xl shadow-lg p-6">
-              <h2 className="text-3xl font-bold mb-4">{item.name}</h2>
+              <h2 className="text-3xl font-bold mb-4">{item.itemname}</h2>
 
               <div className="space-y-4 mb-6 border-b border-gray-200 pb-6">
                 <div>
@@ -164,12 +164,12 @@ export const AdminItemDetail = () => {
                   <div className="w-16 h-16 bg-gray-200 rounded-full overflow-hidden">
                     <img
                       src={`https://i.pravatar.cc/150?u=${seller.id}`}
-                      alt={seller.name}
+                      alt={seller.username}
                       className="w-full h-full object-cover"
                     />
                   </div>
                   <div>
-                    <p className="font-bold text-lg">{seller.name}</p>
+                    <p className="font-bold text-lg">{seller.username}</p>
                     <p className="text-gray-600 text-sm font-mono">{seller.id}</p>
                   </div>
                 </div>

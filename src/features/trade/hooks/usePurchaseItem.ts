@@ -181,9 +181,9 @@ export const usePurchaseItem = (
     setAiRiskLoading(true);
     try {
       const payload = {
-        name: item.name,
+        name: item.itemname,
         category: item.category || (item.isInvestItem ? '投資商品' : '一般商品'),
-        condition: item.condition || inferCondition(item.name + ' ' + (item.description || '')),
+        condition: item.condition || inferCondition(item.itemname + ' ' + (item.description || '')),
         description: (item.description || '').trim() || '説明なし',
         price: item.price,
         tags: item.tags || [],
@@ -254,8 +254,8 @@ export const usePurchaseItem = (
     if (!item) return;
     setInsightLoading(true);
     try {
-      const name = item.name;
-      const condition = inferCondition(item.name);
+      const name = item.itemname;
+      const condition = inferCondition(item.itemname);
       const categoryLabel = item.isInvestItem ? '投資商品' : '一般商品';
       const description = '';
       const res = await suggestPrice(name, condition, categoryLabel, description);
