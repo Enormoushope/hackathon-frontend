@@ -38,7 +38,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       if (!currentUser) {
         // Firebase未ログインでもバックエンドのデフォルトUIDで権限を確認
         try {
-          const res = await apiClient.get('/auth/me');
+          const res = await apiClient.get('/api/auth/me');
           const backendAdmin = res.data?.isAdmin === true || res.data?.is_admin === 1;
           if (active) {
             setIsAdmin(backendAdmin);
@@ -57,7 +57,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
       setIsLoading(true);
       try {
-        const res = await apiClient.get('/auth/me');
+        const res = await apiClient.get('/api/auth/me');
         // プロフィール存在 - 続行
         const backendAdmin = res.data?.isAdmin === true || res.data?.is_admin === 1;
         if (active) {
@@ -69,7 +69,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           // プロフィール未作成 - 自動作成
           console.log('[AuthProvider] Profile not found, auto-creating');
           try {
-            const createRes = await apiClient.post('/auth/me', {
+            const createRes = await apiClient.post('/api/auth/me', {
               name: currentUser.displayName || 'ユーザー',
               avatarUrl: currentUser.photoURL || undefined,
               bio: '',

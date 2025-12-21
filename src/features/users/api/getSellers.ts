@@ -16,7 +16,7 @@ const mapSeller = (user: any): Seller => ({
 
 export const getSellers = async (): Promise<Seller[]> => {
   try {
-    const response = await apiClient.get<any[]>('/users');
+    const response = await apiClient.get<any[]>('/api/users');
     return response.data.map(mapSeller);
   } catch (error) {
     console.error('Failed to fetch sellers:', error);
@@ -28,7 +28,7 @@ export const getSellers = async (): Promise<Seller[]> => {
 export const getSellerById = async (id: string | undefined): Promise<Seller | null> => {
   if (!id) return null;
   try {
-    const response = await apiClient.get<any>(`/users/${id}`);
+    const response = await apiClient.get<any>(`/api/users/${id}`);
     return mapSeller(response.data);
   } catch (error) {
     console.error(`Failed to fetch seller ${id}:`, error);

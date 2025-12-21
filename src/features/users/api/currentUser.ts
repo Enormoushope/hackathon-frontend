@@ -24,7 +24,7 @@ const mapSeller = (user: any): Seller => ({
 
 export const fetchCurrentUser = async (): Promise<Seller> => {
   try {
-    const response = await apiClient.get<any>('/auth/me');
+    const response = await apiClient.get<any>('/api/auth/me');
     return mapSeller(response.data);
   } catch (error) {
     if (axios.isAxiosError(error)) {
@@ -37,7 +37,7 @@ export const fetchCurrentUser = async (): Promise<Seller> => {
 
 export const upsertCurrentUser = async (payload: UpsertUserPayload): Promise<Seller> => {
   try {
-    const response = await apiClient.post<any>('/auth/me', payload);
+    const response = await apiClient.post<any>('/api/auth/me', payload);
     return mapSeller(response.data);
   } catch (error) {
     if (axios.isAxiosError(error)) {

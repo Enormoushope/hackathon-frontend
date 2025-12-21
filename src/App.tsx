@@ -2,6 +2,7 @@ import React, { Suspense, useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route, Link, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './hooks/useAuth';
 import { CLASSIFICATION_TREE, type CategoryNode } from './features/items/types/classification';
+import { apiClient } from './lib/axios';
 
 // --- 各機能のルートコンポーネントをインポート ---
 // ※ファイルパスが合っているか確認してください
@@ -108,8 +109,8 @@ const Home = () => {
   useEffect(() => {
     const loadCategories = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/categories`);
-        const data = await res.json();
+        const res = await apiClient.get('/api/categories');
+        const data = res.data;
         // 以前の動作に戻す（レスポンスが配列でない場合はローカル定義にフォールバック）
         if (Array.isArray(data) && data.length > 0) {
           setCategories(flattenCategories(data));
