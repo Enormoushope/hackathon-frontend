@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom'; // useNavigateを追加
 import axios from 'axios';
+import { useAuth } from '../contexts/AuthContext'; // ログイン状態確認用
 
 const Home = () => {
   const [products, setProducts] = useState<any[]>([]); // 型定義と初期化
   const [loading, setLoading] = useState(true);      // ローディング状態
+  const { currentUser } = useAuth();                  // 現在のログイン状態
+  const navigate = useNavigate();
 
   useEffect(() => {
     const url = import.meta.env.VITE_API_BASE_URL;
@@ -28,7 +31,17 @@ const Home = () => {
     <div className="p-4">
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">新着アイテム</h1>
-        <Link to="/profile" className="text-blue-500">マイページ</Link>
+        <div className="flex items-center gap-4">
+          <Link to="/profile" className="text-blue-500">マイページ</Link>
+          
+          {/* 常にアカウント切替/ログインができるボタンを追加 */}
+          <button 
+            onClick={() => navigate('/login')}
+            className="bg-gray-800 text-white px-4 py-2 rounded text-sm font-bold shadow-sm hover:bg-gray-700 transition"
+          >
+            {currentUser ? "アカウント切替" : "ログイン"}
+          </button>
+        </div>
       </div>
       
       {products.length === 0 ? (
