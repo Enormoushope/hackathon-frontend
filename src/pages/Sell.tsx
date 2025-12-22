@@ -91,33 +91,49 @@ const Sell = () => {
   };
 
   return (
-    <div style={{ padding: '20px' }}>
-      <h2>新規出品</h2>
-      <div>
-        <label>商品画像: </label>
-        <input type="file" accept="image/*" onChange={handleFileChange} />
-        {base64Image && <img src={base64Image} alt="preview" style={{ width: '100px', display: 'block' }} />}
-      </div>
-      
-      <div>
-        <label>商品名: </label>
-        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
-        <button onClick={generateDescription} disabled={isGenerating}>
-          {isGenerating ? "生成中..." : "AIに説明を書いてもらう"}
+    <div className="min-h-screen bg-gradient-to-br from-pink-100 via-white to-blue-100 py-10 px-2 flex items-center justify-center">
+      <form className="w-full max-w-lg mx-auto bg-white/90 rounded-3xl shadow-2xl p-8 space-y-7 border border-gray-100 backdrop-blur-md">
+        <h2 className="text-3xl md:text-4xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 drop-shadow mb-6 tracking-tight">新規出品</h2>
+
+        {/* 画像選択 */}
+        <div>
+          <label className="block text-base font-bold mb-2 text-gray-700">商品画像</label>
+          <input type="file" accept="image/*" onChange={handleFileChange} className="block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 transition" />
+          {base64Image && <img src={base64Image} alt="preview" className="w-32 h-32 object-cover rounded-2xl mt-3 border-4 border-pink-200 shadow-lg mx-auto" />}
+        </div>
+
+        {/* 商品名 + AI説明生成 */}
+        <div className="space-y-2">
+          <label className="block text-base font-bold text-gray-700">商品名</label>
+          <div className="flex gap-2">
+            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}
+              className="flex-1 border-2 border-gray-200 p-3 rounded-xl outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-100 transition shadow-sm bg-white/80" required />
+            <button type="button" onClick={generateDescription} disabled={isGenerating}
+              className="text-xs bg-gradient-to-r from-purple-500 to-pink-400 text-white px-5 py-2 rounded-full font-bold shadow-md hover:scale-105 transition disabled:bg-gray-300 disabled:scale-100">
+              {isGenerating ? "生成中..." : "AIで説明"}
+            </button>
+          </div>
+        </div>
+
+        {/* 価格 */}
+        <div className="space-y-2">
+          <label className="block text-base font-bold text-gray-700">販売価格 (¥)</label>
+          <input type="number" value={price} onChange={(e) => setPrice(e.target.value)}
+            className="w-full border-2 border-gray-200 p-3 rounded-xl outline-none focus:border-yellow-400 focus:ring-2 focus:ring-yellow-100 transition shadow-sm bg-white/80" required />
+        </div>
+
+        {/* 商品説明 */}
+        <div className="space-y-2">
+          <label className="block text-base font-bold text-gray-700">商品説明</label>
+          <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={5}
+            className="w-full border-2 border-gray-200 p-3 rounded-xl outline-none focus:border-pink-400 focus:ring-2 focus:ring-pink-100 transition shadow-sm bg-white/80" />
+        </div>
+
+        <button type="button" onClick={handleSubmit}
+          className="w-full bg-gradient-to-r from-pink-500 via-red-500 to-yellow-400 text-white py-4 rounded-2xl font-black text-lg shadow-xl hover:scale-105 transition disabled:bg-gray-400 disabled:scale-100 mt-4">
+          出品する
         </button>
-      </div>
-
-      <div>
-        <label>価格: </label>
-        <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} />
-      </div>
-
-      <div>
-        <label>商品説明: </label>
-        <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={5} style={{ width: '100%' }} />
-      </div>
-
-      <button onClick={handleSubmit} style={{ marginTop: '20px', padding: '10px 20px' }}>出品する</button>
+      </form>
     </div>
   );
 };
