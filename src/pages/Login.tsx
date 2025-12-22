@@ -31,21 +31,21 @@ const Login = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
-      <div className="p-10 bg-white rounded-2xl shadow-xl text-center">
-        <h1 className="text-3xl font-black mb-2 text-red-600">Gemini Marketplace</h1>
-        <p className="text-gray-500 mb-8 text-sm">AIが査定する次世代フリマアプリ</p>
-        
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-100 via-white to-blue-100">
+      <div className="w-full max-w-md p-10 bg-white/90 rounded-3xl shadow-2xl text-center border border-gray-100 backdrop-blur-md">
+        <h1 className="text-4xl md:text-5xl font-extrabold mb-3 text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 drop-shadow tracking-tight">Gemini Marketplace</h1>
+        <p className="text-gray-500 mb-10 text-base font-medium">AIが査定する次世代フリマアプリ</p>
+
         <button
           onClick={handleGoogleLogin}
-          className="flex items-center gap-4 bg-white border border-gray-300 px-6 py-3 rounded-full font-bold hover:bg-gray-50 transition shadow-sm"
+          className="flex items-center justify-center gap-4 bg-gradient-to-r from-white to-pink-50 border-2 border-pink-200 px-8 py-4 rounded-full font-extrabold text-lg text-pink-600 shadow-lg hover:scale-105 hover:bg-pink-50 transition-all duration-200 mx-auto w-full max-w-xs"
         >
-          <img src="https://www.gstatic.com/firebase/static/bin/api/img/google.png" alt="Google" className="w-5 h-5" />
+          <img src="https://www.gstatic.com/firebase/static/bin/api/img/google.png" alt="Google" className="w-6 h-6" />
           Googleでログイン
         </button>
 
-        <p className="mt-8 text-[10px] text-gray-400">
-          ログインすることで利用規約に同意したことになります
+        <p className="mt-10 text-xs text-gray-400">
+          ログインすることで <span className="underline">利用規約</span> に同意したことになります
         </p>
       </div>
     </div>

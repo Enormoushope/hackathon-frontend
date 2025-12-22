@@ -35,46 +35,50 @@ const Purchase = () => {
     fetchProduct(); // 再取得してSOLDに更新
   };
 
-  if (!product) return <div className="p-8">Loading...</div>;
+  if (!product) return <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-100 via-white to-blue-100"><div className="text-xl font-bold animate-pulse">Loading...</div></div>;
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <nav className="mb-4 text-sm"><Link to="/" className="text-blue-500 underline">ホーム</Link> ＞ {product.title}</nav>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <div className="relative">
-          <img src={product.image_url} className="w-full rounded shadow" />
-          {product.is_sold && (
-            <div className="absolute inset-0 bg-black/50 flex items-center justify-center rounded">
-              <span className="text-white text-5xl font-bold border-4 p-2 -rotate-12">SOLD</span>
-            </div>
-          )}
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-pink-100 via-white to-blue-100 py-10 px-2 flex items-center justify-center">
+      <div className="w-full max-w-4xl mx-auto bg-white/90 rounded-3xl shadow-2xl p-8 md:p-12 border border-gray-100 backdrop-blur-md">
+        <nav className="mb-6 text-sm font-semibold text-gray-500"><Link to="/" className="text-blue-500 underline hover:text-blue-700 transition">ホーム</Link> <span className="mx-2">＞</span> {product.title}</nav>
 
-        <div className="space-y-4">
-          <div className="flex justify-between">
-            <h1 className="text-2xl font-bold">{product.title}</h1>
-            <button onClick={handleToggleLike} className="text-2xl">{isLiked ? '❤️' : '🤍'}</button>
-          </div>
-          <p className="text-3xl text-red-600 font-bold">¥{product.price.toLocaleString()}</p>
-          
-          <div className="bg-purple-50 p-4 rounded border border-purple-200">
-            <button onClick={async () => {
-              setLoadingAI(true);
-              const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/ai/suggest-price`, { title: product.title, description: product.description });
-              setAiAnalysis(res.data.suggestion);
-              setLoadingAI(false);
-            }} className="text-xs bg-purple-600 text-white px-2 py-1 rounded">AI価格査定</button>
-            <p className="text-sm mt-2">{loadingAI ? "査定中..." : aiAnalysis}</p>
-          </div>
-
-          <div className="flex gap-2">
-            {product.is_sold ? (
-              <button disabled className="flex-1 bg-gray-400 py-3 rounded text-white font-bold">SOLD OUT</button>
-            ) : (
-              <button onClick={handlePurchase} className="flex-1 bg-red-600 py-3 rounded text-white font-bold">購入する</button>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div className="relative">
+            <img src={product.image_url} className="w-full h-80 object-cover rounded-2xl shadow-xl border-4 border-pink-100" alt="商品画像" />
+            {product.is_sold && (
+              <div className="absolute inset-0 bg-black/60 flex items-center justify-center rounded-2xl">
+                <span className="text-white text-6xl md:text-7xl font-extrabold border-4 border-white px-8 py-2 -rotate-12 shadow-2xl tracking-widest">SOLD</span>
+              </div>
             )}
-            <Link to={`/chat/${product.id}?receiver=${product.seller_id}`} className="bg-gray-200 px-4 py-3 rounded">質問</Link>
+          </div>
+
+          <div className="space-y-6 flex flex-col justify-between">
+            <div className="flex justify-between items-center">
+              <h1 className="text-3xl md:text-4xl font-extrabold text-gray-800 tracking-tight drop-shadow">{product.title}</h1>
+              <button onClick={handleToggleLike} className="text-3xl md:text-4xl transition hover:scale-125 duration-200">{isLiked ? '❤️' : '🤍'}</button>
+            </div>
+            <p className="text-4xl text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 font-extrabold drop-shadow">¥{product.price.toLocaleString()}</p>
+
+            <div className="bg-gradient-to-r from-purple-100 to-pink-50 p-5 rounded-2xl border-2 border-purple-200 shadow flex flex-col gap-2">
+              <button onClick={async () => {
+                setLoadingAI(true);
+                const res = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/ai/suggest-price`, { title: product.title, description: product.description });
+                setAiAnalysis(res.data.suggestion);
+                setLoadingAI(false);
+              }} className="text-xs bg-gradient-to-r from-purple-500 to-pink-400 text-white px-4 py-2 rounded-full font-bold shadow hover:scale-105 transition disabled:bg-gray-300 disabled:scale-100">
+                AI価格査定
+              </button>
+              <p className="text-sm mt-1 min-h-[1.5em]">{loadingAI ? <span className="animate-pulse text-gray-400">査定中...</span> : aiAnalysis}</p>
+            </div>
+
+            <div className="flex gap-3 mt-4">
+              {product.is_sold ? (
+                <button disabled className="flex-1 bg-gray-400 py-4 rounded-2xl text-white font-black text-lg shadow-xl cursor-not-allowed">SOLD OUT</button>
+              ) : (
+                <button onClick={handlePurchase} className="flex-1 bg-gradient-to-r from-pink-500 via-red-500 to-yellow-400 py-4 rounded-2xl text-white font-black text-lg shadow-xl hover:scale-105 transition">購入する</button>
+              )}
+              <Link to={`/chat/${product.id}?receiver=${product.seller_id}`} className="bg-gray-100 px-6 py-4 rounded-2xl font-bold text-gray-700 shadow hover:bg-gray-200 transition flex items-center">質問</Link>
+            </div>
           </div>
         </div>
       </div>

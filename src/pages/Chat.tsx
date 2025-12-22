@@ -67,28 +67,28 @@ const Chat = () => {
   }, [messages]);
 
   return (
-    <div className="flex flex-col h-screen max-w-2xl mx-auto bg-gray-50">
+    <div className="min-h-screen flex flex-col h-screen max-w-2xl mx-auto bg-gradient-to-br from-pink-100 via-white to-blue-100">
       {/* ヘッダー */}
-      <div className="p-4 border-b bg-white flex items-center justify-between">
-        <Link to="/profile" className="text-blue-600">← 戻る</Link>
-        <h1 className="font-bold text-lg">チャットルーム</h1>
-        <Link to={`/purchase/${productId}`} className="text-xs bg-gray-200 px-2 py-1 rounded">商品詳細</Link>
+      <div className="p-4 border-b-2 border-pink-200 bg-white/90 flex items-center justify-between rounded-t-3xl shadow-md">
+        <Link to="/profile" className="text-pink-500 font-bold hover:underline">← 戻る</Link>
+        <h1 className="font-extrabold text-lg text-gray-700 tracking-tight drop-shadow">チャットルーム</h1>
+        <Link to={`/purchase/${productId}`} className="text-xs bg-gradient-to-r from-pink-200 to-yellow-100 px-3 py-1 rounded-full font-bold text-pink-700 shadow hover:scale-105 transition">商品詳細</Link>
       </div>
 
       {/* メッセージエリア */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-white/60 backdrop-blur rounded-b-3xl shadow-inner">
         {messages.map((m) => (
           <div 
             key={m.id} 
             className={`flex ${m.sender_id === currentUser?.uid ? 'justify-end' : 'justify-start'}`}
           >
-            <div className={`max-w-[80%] p-3 rounded-2xl shadow-sm ${
+            <div className={`max-w-[80%] p-4 rounded-3xl shadow-md text-base break-words transition-all duration-200 ${
               m.sender_id === currentUser?.uid 
-                ? 'bg-blue-600 text-white rounded-tr-none' 
-                : 'bg-white text-gray-800 rounded-tl-none border'
+                ? 'bg-gradient-to-r from-pink-400 to-yellow-300 text-white rounded-tr-none border-2 border-pink-200 animate-in fade-in slide-in-from-right-8' 
+                : 'bg-white text-gray-800 rounded-tl-none border-2 border-blue-100 animate-in fade-in slide-in-from-left-8'
             }`}>
-              <p className="text-sm">{m.content}</p>
-              <p className={`text-[10px] mt-1 ${m.sender_id === currentUser?.uid ? 'text-blue-100' : 'text-gray-400'}`}>
+              <p className="text-base font-medium">{m.content}</p>
+              <p className={`text-[10px] mt-2 text-right ${m.sender_id === currentUser?.uid ? 'text-yellow-100' : 'text-blue-400'}`}>
                 {new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </p>
             </div>
@@ -98,17 +98,17 @@ const Chat = () => {
       </div>
 
       {/* 送信フォーム */}
-      <form onSubmit={handleSend} className="p-4 bg-white border-t flex gap-2">
+      <form onSubmit={handleSend} className="p-5 bg-white/90 border-t-2 border-pink-200 flex gap-3 rounded-b-3xl shadow-md">
         <input 
           type="text" 
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
           placeholder="メッセージを入力..."
-          className="flex-1 border rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 border-2 border-pink-200 rounded-full px-5 py-3 focus:outline-none focus:ring-2 focus:ring-pink-300 bg-white/80 shadow-sm text-base"
         />
         <button 
           type="submit" 
-          className="bg-blue-600 text-white p-2 rounded-full w-10 h-10 flex items-center justify-center hover:bg-blue-700"
+          className="bg-gradient-to-r from-pink-500 to-yellow-400 text-white p-3 rounded-full w-12 h-12 flex items-center justify-center text-xl font-bold shadow-lg hover:scale-110 transition-all duration-150"
         >
           ✈️
         </button>
