@@ -84,6 +84,26 @@ const Profile = () => {
               if (!grouped[m.product_id]) grouped[m.product_id] = [];
               grouped[m.product_id].push(m);
             });
+            // 相手の名前をキャッシュ
+            const [partnerNameMap, setPartnerNameMap] = React.useState<{[uid: string]: string}>({});
+            React.useEffect(() => {
+              const fetchNames = async () => {
+                const ids = Array.from(new Set(data.latest_messages?.map((m: any) => m.partner_id).filter(Boolean)));
+                const newMap: {[uid: string]: string} = {...partnerNameMap};
+                for (const uid of ids) {
+                  if (!uid || newMap[uid]) continue;
+                  try {
+                    const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/users/${uid}`);
+                    newMap[uid] = res.data?.name || uid;
+                  } catch {
+                    newMap[uid] = uid;
+                  }
+                }
+                setPartnerNameMap(newMap);
+              };
+              fetchNames();
+              // eslint-disable-next-line
+            }, [data.latest_messages]);
             return Object.entries(grouped).map(([productId, msgs]) => {
               const m = msgs[0]; // 代表メッセージ
               const product = data.selling_products?.find((p: any) => p.id === m.product_id) || data.liked_products?.find((p: any) => p.id === m.product_id) || {};
@@ -93,6 +113,7 @@ const Profile = () => {
                   <div className="flex-1 min-w-0">
                     <h3 className="font-bold text-base text-gray-800 truncate">{product.title || `商品ID: ${m.product_id}`}</h3>
                     <p className="text-xs text-gray-400 mb-1 truncate">{msgs.length}件のやりとり</p>
+                    <p className="text-xs text-blue-500 font-bold">相手: {partnerNameMap[m.partner_id] || m.partner_id}</p>
                   </div>
                   <Link to={`/chat/${m.product_id}?receiver=${m.partner_id}`} className="bg-gradient-to-r from-pink-400 to-yellow-300 text-white px-4 py-2 rounded-xl text-sm font-bold shadow hover:scale-105 transition whitespace-nowrap">DMへ</Link>
                 </div>
