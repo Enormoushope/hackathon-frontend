@@ -96,6 +96,10 @@ const Sell = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-100 via-white to-blue-100 py-10 px-2 flex items-center justify-center">
       <form className="w-full max-w-lg mx-auto bg-white/90 rounded-3xl shadow-2xl p-8 space-y-7 border border-gray-100 backdrop-blur-md">
+        <div className="flex justify-between items-center mb-2">
+          <a href="/profile" className="text-pink-600 font-bold hover:underline bg-pink-50 px-4 py-2 rounded-xl shadow hover:bg-pink-100 transition">← マイページに戻る</a>
+          <span></span>
+        </div>
         <h2 className="text-3xl md:text-4xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 drop-shadow mb-6 tracking-tight">新規出品</h2>
 
         {/* 画像選択 */}
