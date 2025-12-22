@@ -30,9 +30,29 @@ const Chat = () => {
           user2: receiverId
         }
       });
+      if (!Array.isArray(res.data)) {
+        throw new Error('サーバーからのレスポンス形式が不正です');
+      }
       setMessages(res.data || []);
-    } catch (err) {
-      console.error("メッセージ取得失敗", err);
+    } catch (err: any) {
+      let msg = '[チャット履歴取得エラー] ';
+      if (err.response) {
+        // サーバーからエラー応答
+        msg += `サーバー応答エラー: ${err.response.status} ${err.response.statusText}\n`;
+        if (err.response.data && err.response.data.error) {
+          msg += `詳細: ${err.response.data.error}`;
+        }
+      } else if (err.request) {
+        // 通信自体の失敗
+        msg += 'サーバーに接続できませんでした。通信環境をご確認ください。';
+      } else if (err instanceof Error) {
+        // その他JSエラー
+        msg += err.message;
+      } else {
+        msg += String(err);
+      }
+      console.error(msg, err);
+      alert(msg);
     }
   };
 
@@ -56,8 +76,22 @@ const Chat = () => {
       });
       setNewMessage('');
       fetchMessages();
-    } catch (err) {
-      alert("送信に失敗しました");
+    } catch (err: any) {
+      let msg = '[メッセージ送信エラー] ';
+      if (err.response) {
+        msg += `サーバー応答エラー: ${err.response.status} ${err.response.statusText}\n`;
+        if (err.response.data && err.response.data.error) {
+          msg += `詳細: ${err.response.data.error}`;
+        }
+      } else if (err.request) {
+        msg += 'サーバーに接続できませんでした。通信環境をご確認ください。';
+      } else if (err instanceof Error) {
+        msg += err.message;
+      } else {
+        msg += String(err);
+      }
+      console.error(msg, err);
+      alert(msg);
     }
   };
 
