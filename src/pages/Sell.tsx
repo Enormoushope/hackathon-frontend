@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useAuth } from '../contexts/AuthContext';
 
 const Sell = () => {
   const [title, setTitle] = useState('');
@@ -6,6 +7,7 @@ const Sell = () => {
   const [description, setDescription] = useState('');
   const [base64Image, setBase64Image] = useState<string>('');
   const [isGenerating, setIsGenerating] = useState(false);
+  const { currentUser } = useAuth();
 
   // --- 画像を圧縮してBase64に変換する関数 ---
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -72,7 +74,7 @@ const Sell = () => {
   // --- 最終的な出品処理 ---
   const handleSubmit = async () => {
     const payload = {
-      seller_id: 1, // 仮のID
+      seller_id: currentUser?.uid ?? '',
       title,
       price: Number(price),
       description,
