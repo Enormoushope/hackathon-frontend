@@ -106,7 +106,7 @@ const Profile = () => {
           </div>
           {/* 全画面へのクイックリンク */}
           <div className="flex gap-3 border-t pt-4">
-            <Link to="/" className="flex-1 text-center bg-gray-100 py-3 rounded-xl font-bold hover:bg-gray-200 transition">ホーム</Link>
+            <Link to="/home" className="flex-1 text-center bg-gray-100 py-3 rounded-xl font-bold hover:bg-gray-200 transition">ホーム</Link>
             <Link to="/sell" className="flex-1 text-center bg-gradient-to-r from-pink-500 to-yellow-400 text-white py-3 rounded-xl font-bold shadow hover:scale-105 transition">出品する</Link>
           </div>
         </div>

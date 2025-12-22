@@ -40,7 +40,7 @@ const Purchase = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-pink-100 via-white to-blue-100 py-10 px-2 flex items-center justify-center">
       <div className="w-full max-w-4xl mx-auto bg-white/90 rounded-3xl shadow-2xl p-8 md:p-12 border border-gray-100 backdrop-blur-md">
-        <nav className="mb-6 text-sm font-semibold text-gray-500"><Link to="/" className="text-blue-500 underline hover:text-blue-700 transition">ホーム</Link> <span className="mx-2">＞</span> {product.title}</nav>
+        <nav className="mb-6 text-sm font-semibold text-gray-500"><Link to="/home" className="text-blue-500 underline hover:text-blue-700 transition">ホーム</Link> <span className="mx-2">＞</span> {product.title}</nav>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           <div className="relative">
