@@ -20,17 +20,53 @@ const Chat = () => {
     // 相手の名前を取得
     useEffect(() => {
       const fetchReceiverName = async () => {
-        if (!receiverId) return;
+        if (!receiverId) {
+          console.warn('[Chat] receiverIdが未取得のため名前取得不可');
+          return;
+        }
         try {
+          console.log('[Chat] 相手の名前取得API呼び出し', receiverId);
           const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/users/${receiverId}`);
-          setReceiverName(res.data?.name || '相手');
-        } catch {
+          console.log('[Chat] /api/users レスポンス', res.data);
+          if (res.data?.name) {
+            setReceiverName(res.data.name);
+          } else {
+            console.warn('[Chat] nameプロパティが空または未定義', res.data);
+            setReceiverName('相手');
+          }
+        } catch (err) {
+          console.error('[Chat] 相手の名前取得API失敗', err);
           setReceiverName('相手');
         }
       };
       fetchReceiverName();
     }, [receiverId]);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [userNameMap, setUserNameMap] = useState<{ [uid: string]: string }>({});
+  // メッセージ内の全ユーザーIDの名前を取得
+  useEffect(() => {
+    const fetchNames = async () => {
+      const ids = Array.from(new Set([
+        ...messages.map(m => m.sender_id),
+        ...messages.map(m => m.receiver_id),
+        currentUser?.uid,
+        receiverId
+      ].filter(Boolean)));
+      const newMap: { [uid: string]: string } = { ...userNameMap };
+      for (const uid of ids) {
+        if (!uid || newMap[uid]) continue;
+        try {
+          const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/users/${uid}`);
+          newMap[uid] = res.data?.name || uid;
+        } catch {
+          newMap[uid] = uid;
+        }
+      }
+      setUserNameMap(newMap);
+    };
+    if (messages.length > 0) fetchNames();
+    // eslint-disable-next-line
+  }, [messages, currentUser?.uid, receiverId]);
 
   // デバッグ用: 受信データやIDを可視化
   useEffect(() => {
@@ -111,6 +147,7 @@ const Chat = () => {
       console.error('[送信不可] currentUser?.uid:', currentUser?.uid, 'receiverId:', receiverId, 'productId:', productId);
       return;
     }
+    console.log('[送信直前] 自分のID:', currentUser?.uid, '相手のID:', receiverId, '商品ID:', productId);
 
     try {
       const payload = {
@@ -170,11 +207,27 @@ const Chat = () => {
       {/* メッセージエリア */}
       <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-white/60 backdrop-blur rounded-b-3xl shadow-inner">
         {messages.map((m) => {
-          // 型不一致の警告
+          // 送信者・受信者IDのデバッグ
+          if (!m.sender_id) {
+            console.error('[Chat] メッセージにsender_idがありません', m);
+          }
+          if (!m.receiver_id) {
+            console.error('[Chat] メッセージにreceiver_idがありません', m);
+          }
+          if (!m.product_id) {
+            console.error('[Chat] メッセージにproduct_idがありません', m);
+          }
           if (typeof m.sender_id !== typeof currentUser?.uid) {
             console.warn('[Chat] sender_id型不一致', m.sender_id, currentUser?.uid);
           }
+          if (typeof m.receiver_id !== typeof receiverId) {
+            console.warn('[Chat] receiver_id型不一致', m.receiver_id, receiverId);
+          }
           const isMine = String(m.sender_id) === String(currentUser?.uid);
+          const isToMe = String(m.receiver_id) === String(currentUser?.uid);
+          if (!isMine && !isToMe) {
+            console.warn('[Chat] このメッセージは自分にも相手にも紐づいていません', m);
+          }
           return (
             <div 
               key={m.id} 
@@ -188,6 +241,9 @@ const Chat = () => {
                 <p className="text-base font-medium">{m.content}</p>
                 <p className={`text-[10px] mt-2 text-right ${isMine ? 'text-yellow-100' : 'text-blue-400'}`}>
                   {new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </p>
+                <p className="text-[10px] text-gray-400 mt-1">
+                  送信者: {userNameMap[m.sender_id] || m.sender_id} / 受信者: {userNameMap[m.receiver_id] || m.receiver_id}
                 </p>
               </div>
             </div>
