@@ -16,6 +16,20 @@ const Chat = () => {
   const receiverId = searchParams.get('receiver'); // 相手のUID
   
   const { currentUser } = useAuth();
+  const [receiverName, setReceiverName] = useState<string>('');
+    // 相手の名前を取得
+    useEffect(() => {
+      const fetchReceiverName = async () => {
+        if (!receiverId) return;
+        try {
+          const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/users/${receiverId}`);
+          setReceiverName(res.data?.name || '相手');
+        } catch {
+          setReceiverName('相手');
+        }
+      };
+      fetchReceiverName();
+    }, [receiverId]);
   const [messages, setMessages] = useState<Message[]>([]);
 
   // デバッグ用: 受信データやIDを可視化
@@ -30,12 +44,24 @@ const Chat = () => {
 
   // 履歴の取得
   const fetchMessages = async () => {
+    if (!productId) {
+      console.warn('[Chat] productIdが未取得です');
+      return;
+    }
+    if (!currentUser?.uid) {
+      console.warn('[Chat] currentUser?.uidが未取得です');
+      return;
+    }
+    if (!receiverId) {
+      console.warn('[Chat] receiverIdが未取得です');
+      return;
+    }
     try {
       const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/messages`, {
         params: {
           product_id: productId,
-          user1: currentUser?.uid,
-          user2: receiverId
+          user1: String(currentUser?.uid),
+          user2: String(receiverId)
         }
       });
       // nullや配列以外が返ってきても空配列として扱う
@@ -67,7 +93,8 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    if (productId && receiverId && currentUser?.uid) {
+    if (!receiverId) return;
+    if (productId && currentUser?.uid) {
       fetchMessages();
       const interval = setInterval(fetchMessages, 3000);
       return () => clearInterval(interval);
@@ -79,6 +106,11 @@ const Chat = () => {
   const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newMessage.trim()) return;
+    if (!currentUser?.uid || !receiverId || !productId) {
+      alert('送信に必要な情報（自分のID・相手のID・商品ID）が不足しています。');
+      console.error('[送信不可] currentUser?.uid:', currentUser?.uid, 'receiverId:', receiverId, 'productId:', productId);
+      return;
+    }
 
     try {
       const payload = {
@@ -115,34 +147,52 @@ const Chat = () => {
     scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  if (!receiverId) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-100 via-white to-blue-100">
+        <div className="text-xl font-bold text-red-500">相手が指定されていません。URLにreceiverパラメータが必要です。</div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col h-screen max-w-2xl mx-auto bg-gradient-to-br from-pink-100 via-white to-blue-100">
       {/* ヘッダー */}
       <div className="p-4 border-b-2 border-pink-200 bg-white/90 flex items-center justify-between rounded-t-3xl shadow-md">
         <Link to="/profile" className="text-pink-500 font-bold hover:underline">← 戻る</Link>
-        <h1 className="font-extrabold text-lg text-gray-700 tracking-tight drop-shadow">チャットルーム</h1>
+        <div className="flex flex-col items-center flex-1">
+          <h1 className="font-extrabold text-lg text-gray-700 tracking-tight drop-shadow">チャットルーム</h1>
+          <span className="text-xs text-pink-600 font-bold mt-1">{receiverName && `相手: ${receiverName}`}</span>
+        </div>
         <Link to={`/purchase/${productId}`} className="text-xs bg-gradient-to-r from-pink-200 to-yellow-100 px-3 py-1 rounded-full font-bold text-pink-700 shadow hover:scale-105 transition">商品詳細</Link>
       </div>
 
       {/* メッセージエリア */}
       <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-white/60 backdrop-blur rounded-b-3xl shadow-inner">
-        {messages.map((m) => (
-          <div 
-            key={m.id} 
-            className={`flex ${m.sender_id === currentUser?.uid ? 'justify-end' : 'justify-start'}`}
-          >
-            <div className={`max-w-[80%] p-4 rounded-3xl shadow-md text-base break-words transition-all duration-200 ${
-              m.sender_id === currentUser?.uid 
-                ? 'bg-gradient-to-r from-pink-400 to-yellow-300 text-white rounded-tr-none border-2 border-pink-200 animate-in fade-in slide-in-from-right-8' 
-                : 'bg-white text-gray-800 rounded-tl-none border-2 border-blue-100 animate-in fade-in slide-in-from-left-8'
-            }`}>
-              <p className="text-base font-medium">{m.content}</p>
-              <p className={`text-[10px] mt-2 text-right ${m.sender_id === currentUser?.uid ? 'text-yellow-100' : 'text-blue-400'}`}>
-                {new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-              </p>
+        {messages.map((m) => {
+          // 型不一致の警告
+          if (typeof m.sender_id !== typeof currentUser?.uid) {
+            console.warn('[Chat] sender_id型不一致', m.sender_id, currentUser?.uid);
+          }
+          const isMine = String(m.sender_id) === String(currentUser?.uid);
+          return (
+            <div 
+              key={m.id} 
+              className={`flex ${isMine ? 'justify-end' : 'justify-start'}`}
+            >
+              <div className={`max-w-[80%] p-4 rounded-3xl shadow-md text-base break-words transition-all duration-200 ${
+                isMine
+                  ? 'bg-gradient-to-r from-pink-400 to-yellow-300 text-white rounded-tr-none border-2 border-pink-200 animate-in fade-in slide-in-from-right-8'
+                  : 'bg-white text-gray-800 rounded-tl-none border-2 border-blue-100 animate-in fade-in slide-in-from-left-8'
+              }`}>
+                <p className="text-base font-medium">{m.content}</p>
+                <p className={`text-[10px] mt-2 text-right ${isMine ? 'text-yellow-100' : 'text-blue-400'}`}>
+                  {new Date(m.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </p>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
         <div ref={scrollRef} />
       </div>
 
