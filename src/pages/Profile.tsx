@@ -77,19 +77,28 @@ const Profile = () => {
             </div>
           ))}
 
-          {activeTab === 'messages' && data.latest_messages?.map((m: any) => {
-            const product = data.selling_products?.find((p: any) => p.id === m.product_id) || data.liked_products?.find((p: any) => p.id === m.product_id) || {};
-            return (
-              <div key={m.id} className="flex gap-5 p-4 border-2 border-gray-100 rounded-2xl bg-white shadow hover:bg-gray-50 cursor-pointer transition items-center">
-                <img src={product.image_url || 'https://via.placeholder.com/80'} className="w-16 h-16 object-cover rounded-xl border-2 border-pink-100 shadow" alt="product" />
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-bold text-base text-gray-800 truncate">{product.title || `商品ID: ${m.product_id}`}</h3>
-                  <p className="text-xs text-gray-400 mb-1 truncate">{m.content}</p>
+          {activeTab === 'messages' && (() => {
+            // 商品ごとにまとめる
+            const grouped: {[productId: string]: any[]} = {};
+            data.latest_messages?.forEach((m: any) => {
+              if (!grouped[m.product_id]) grouped[m.product_id] = [];
+              grouped[m.product_id].push(m);
+            });
+            return Object.entries(grouped).map(([productId, msgs]) => {
+              const m = msgs[0]; // 代表メッセージ
+              const product = data.selling_products?.find((p: any) => p.id === m.product_id) || data.liked_products?.find((p: any) => p.id === m.product_id) || {};
+              return (
+                <div key={productId} className="flex gap-5 p-4 border-2 border-gray-100 rounded-2xl bg-white shadow hover:bg-gray-50 cursor-pointer transition items-center">
+                  <img src={product.image_url || 'https://via.placeholder.com/80'} className="w-16 h-16 object-cover rounded-xl border-2 border-pink-100 shadow" alt="product" />
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-bold text-base text-gray-800 truncate">{product.title || `商品ID: ${m.product_id}`}</h3>
+                    <p className="text-xs text-gray-400 mb-1 truncate">{msgs.length}件のやりとり</p>
+                  </div>
+                  <Link to={`/chat/${m.product_id}?receiver=${m.partner_id}`} className="bg-gradient-to-r from-pink-400 to-yellow-300 text-white px-4 py-2 rounded-xl text-sm font-bold shadow hover:scale-105 transition whitespace-nowrap">DMへ</Link>
                 </div>
-                <Link to={`/chat/${m.product_id}?receiver=${m.partner_id}`} className="bg-gradient-to-r from-pink-400 to-yellow-300 text-white px-4 py-2 rounded-xl text-sm font-bold shadow hover:scale-105 transition whitespace-nowrap">DMへ</Link>
-              </div>
-            );
-          })}
+              );
+            });
+          })()}
         </div>
       </div>
     </div>

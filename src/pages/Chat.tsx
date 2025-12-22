@@ -59,10 +59,13 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    fetchMessages();
-    const interval = setInterval(fetchMessages, 3000); // 3秒ごとに自動更新（簡易ポーリング）
-    return () => clearInterval(interval);
-  }, [productId, receiverId]);
+    if (productId && receiverId && currentUser?.uid) {
+      fetchMessages();
+      const interval = setInterval(fetchMessages, 3000);
+      return () => clearInterval(interval);
+    }
+    // eslint-disable-next-line
+  }, [productId, receiverId, currentUser?.uid]);
 
   // メッセージ送信
   const handleSend = async (e: React.FormEvent) => {
