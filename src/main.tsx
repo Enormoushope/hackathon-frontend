@@ -1,31 +1,13 @@
-import React, { Suspense } from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App.tsx';
-import './index.css';
-
-// Polyfill for React Scheduler - ensure performance.unstable_now is defined
-if (typeof performance === 'undefined') {
-  (globalThis as any).performance = {} as any;
-}
-if (!(performance as any).unstable_now) {
-  (performance as any).unstable_now = () => Date.now();
-}
-
-// QueryClient remains eager (small) so react-query hooks work immediately.
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-const queryClient = new QueryClient();
-
-// WalletProviders is dynamically imported to avoid bundling heavy wallet libs
-const WalletProviders = React.lazy(() => import('./providers/WalletProviders'));
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App'
+import './index.css'
+import { AuthProvider } from './contexts/AuthContext'
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <Suspense fallback={<div className="p-6 text-center">Wallets 初期化中...</div>}>
-        <WalletProviders>
-          <App />
-        </WalletProviders>
-      </Suspense>
-    </QueryClientProvider>
+    <AuthProvider>
+      <App />
+    </AuthProvider>
   </React.StrictMode>,
-);
+)
