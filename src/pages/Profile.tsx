@@ -20,19 +20,20 @@ const MessagesTab = ({ latestMessages, sellingProducts, likedProducts }: { lates
     fetchNames();
     // eslint-disable-next-line
   }, [latestMessages]);
-  // 商品ごとにまとめる
-  const grouped: { [productId: string]: any[] } = {};
+  // 商品IDと相手IDごとにまとめる
+  const grouped: { [key: string]: any[] } = {};
   latestMessages?.forEach((m: any) => {
-    if (!grouped[m.product_id]) grouped[m.product_id] = [];
-    grouped[m.product_id].push(m);
+    const key = `${m.product_id}_${m.partner_id}`;
+    if (!grouped[key]) grouped[key] = [];
+    grouped[key].push(m);
   });
   return (
     <>
-      {Object.entries(grouped).map(([productId, msgs]) => {
+      {Object.entries(grouped).map(([key, msgs]) => {
         const m = msgs[0]; // 代表メッセージ
         const product = sellingProducts?.find((p: any) => p.id === m.product_id) || likedProducts?.find((p: any) => p.id === m.product_id) || {};
         return (
-          <div key={productId} className="flex gap-5 p-4 border-2 border-gray-100 rounded-2xl bg-white shadow hover:bg-gray-50 cursor-pointer transition items-center">
+          <div key={key} className="flex gap-5 p-4 border-2 border-gray-100 rounded-2xl bg-white shadow hover:bg-gray-50 cursor-pointer transition items-center">
             <img src={product.image_url || 'https://via.placeholder.com/80'} className="w-16 h-16 object-cover rounded-xl border-2 border-pink-100 shadow" alt="product" />
             <div className="flex-1 min-w-0">
               <h3 className="font-bold text-base text-gray-800 truncate">{product.title || `商品ID: ${m.product_id}`}</h3>
