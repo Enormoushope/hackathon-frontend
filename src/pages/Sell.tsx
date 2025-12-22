@@ -1,154 +1,122 @@
 import React, { useState } from 'react';
-import { storage } from '../firebase';
-import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
-import { useAuth } from '../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
-// ✨ アイコンを追加するとより直感的になります
-import { FaArrowLeft } from 'react-icons/fa'; 
 
 const Sell = () => {
-  const { currentUser } = useAuth();
-  const navigate = useNavigate();
-  
   const [title, setTitle] = useState('');
-  const [description, setDescription] = useState('');
   const [price, setPrice] = useState('');
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
+  const [description, setDescription] = useState('');
+  const [base64Image, setBase64Image] = useState<string>('');
   const [isGenerating, setIsGenerating] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const getFriendlyErrorMessage = (err: any) => {
-    if (err.response) {
-      const status = err.response.status;
-      if (status === 401) return "ログインの有効期限が切れています。";
-      if (status >= 500) return "サーバー側で不具合が発生しました。";
-      return err.response.data?.message || "入力内容に不備があります。";
-    }
-    return "通信エラーが発生しました。";
+  // --- 画像を圧縮してBase64に変換する関数 ---
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result as string;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        const MAX_WIDTH = 800; // ここでサイズを制限（1MB以下に抑えるコツ）
+        let width = img.width;
+        let height = img.height;
+
+        if (width > MAX_WIDTH) {
+          height = (MAX_WIDTH / width) * height;
+          width = MAX_WIDTH;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx?.drawImage(img, 0, 0, width, height);
+
+        // JPEG形式で品質を 0.7 (70%) に落として圧縮
+        const compressedBase64 = canvas.toDataURL('image/jpeg', 0.7);
+        setBase64Image(compressedBase64);
+        console.log("画像圧縮完了:", compressedBase64.length, "文字");
+      };
+    };
   };
 
-  const handleGenerateAIDescription = async () => {
-    if (!title) return;
+  // --- AI商品説明生成 ---
+  const generateDescription = async () => {
+    if (!title) {
+      alert("商品名を入力してください");
+      return;
+    }
     setIsGenerating(true);
-    setErrorMessage(null);
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/ai/generate-description`, {
-        title: title
+      const response = await fetch('/api/ai/description', { // あなたのAPIパスに合わせてください
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: title,
+          image_data: base64Image // ここで圧縮済みBase64を送る
+        }),
       });
-      if (response.data.description) setDescription(response.data.description);
-    } catch (err) {
-      setErrorMessage("【AI生成失敗】" + getFriendlyErrorMessage(err));
+      const data = await response.json();
+      if (data.description) {
+        setDescription(data.description);
+      }
+    } catch (error) {
+      console.error("生成エラー:", error);
     } finally {
       setIsGenerating(false);
     }
   };
 
-  const handleSell = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setErrorMessage(null);
-    if (!imageFile) return setErrorMessage("画像を選択してください。");
+  // --- 最終的な出品処理 ---
+  const handleSubmit = async () => {
+    const payload = {
+      seller_id: 1, // 仮のID
+      title,
+      price: Number(price),
+      description,
+      image_url: base64Image, // DBのimage_urlカラムにBase64をそのまま保存
+    };
     
-    setUploading(true);
-    try {
-      const storageRef = ref(storage, `products/${Date.now()}_${imageFile.name}`);
-      await uploadBytes(storageRef, imageFile);
-      const imageUrl = await getDownloadURL(storageRef);
+    const res = await fetch('/api/products', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
 
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/products`, {
-        seller_id: currentUser?.uid,
-        title,
-        description,
-        price: Number(price),
-        image_url: imageUrl
-      });
-
-      alert("出品完了！");
-      navigate('/home');
-    } catch (err) {
-      setErrorMessage("【出品失敗】" + getFriendlyErrorMessage(err));
-    } finally {
-      setUploading(false);
+    if (res.ok) {
+      alert("出品しました！");
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-pink-100 via-white to-blue-100 flex items-center justify-center py-10 px-4 relative">
+    <div style={{ padding: '20px' }}>
+      <h2>新規出品</h2>
+      <div>
+        <label>商品画像: </label>
+        <input type="file" accept="image/*" onChange={handleFileChange} />
+        {base64Image && <img src={base64Image} alt="preview" style={{ width: '100px', display: 'block' }} />}
+      </div>
       
-      {/* ✨ 左上の戻るボタン */}
-      <button 
-        onClick={() => navigate(-1)} 
-        className="absolute top-6 left-6 p-3 bg-white/80 backdrop-blur-md rounded-full shadow-lg text-gray-600 hover:text-pink-500 transition-all hover:scale-110 active:scale-95 border border-white"
-        title="戻る"
-      >
-        <FaArrowLeft size={20} />
-      </button>
+      <div>
+        <label>商品名: </label>
+        <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+        <button onClick={generateDescription} disabled={isGenerating}>
+          {isGenerating ? "生成中..." : "AIに説明を書いてもらう"}
+        </button>
+      </div>
 
-      <form onSubmit={handleSell} className="w-full max-w-lg mx-auto bg-white/90 rounded-3xl shadow-2xl p-8 space-y-7 border border-gray-100 backdrop-blur-md relative">
-        <h1 className="text-3xl md:text-4xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-pink-500 via-red-500 to-yellow-500 drop-shadow mb-6 tracking-tight">商品を出品する</h1>
+      <div>
+        <label>価格: </label>
+        <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} />
+      </div>
 
-        {errorMessage && (
-          <div className="bg-gradient-to-r from-red-100 to-pink-100 border-2 border-red-300 text-red-700 p-4 rounded-2xl text-base font-bold animate-pulse shadow-lg flex items-center gap-2">
-            <span className="text-2xl">⚠️</span> {errorMessage}
-          </div>
-        )}
+      <div>
+        <label>商品説明: </label>
+        <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={5} style={{ width: '100%' }} />
+      </div>
 
-        {/* 画像選択 */}
-        <div>
-          <label className="block text-base font-bold mb-2 text-gray-700">商品画像</label>
-          {previewUrl && <img src={previewUrl} className="w-full h-56 object-cover rounded-2xl mb-3 border-4 border-pink-200 shadow-lg" alt="商品画像プレビュー" />}
-          <input type="file" accept="image/*" onChange={(e) => {
-            const file = e.target.files?.[0] || null;
-            setImageFile(file);
-            setPreviewUrl(file ? URL.createObjectURL(file) : null);
-          }} className="block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 cursor-pointer" />
-        </div>
-
-        {/* 商品名 */}
-        <div className="space-y-2">
-          <label className="block text-base font-bold text-gray-700">商品名</label>
-          <input type="text" value={title} onChange={(e) => setTitle(e.target.value)}
-            className="w-full border-2 border-gray-200 p-3 rounded-xl outline-none focus:border-pink-400 bg-white/80" required />
-        </div>
-        
-        {/* 説明文 */}
-        <div className="space-y-2">
-          <div className="flex justify-between items-center">
-            <label className="block text-base font-bold text-gray-700">商品の説明</label>
-            <button type="button" onClick={handleGenerateAIDescription} disabled={isGenerating || !title}
-              className="text-xs bg-gradient-to-r from-purple-500 to-pink-400 text-white px-5 py-2 rounded-full font-bold shadow-md hover:scale-105 disabled:bg-gray-300">
-              {isGenerating ? "生成中..." : "✨ AIで説明を作る"}
-            </button>
-          </div>
-          <textarea value={description} onChange={(e) => setDescription(e.target.value)}
-            className="w-full border-2 border-gray-200 p-3 rounded-xl h-40 outline-none focus:border-pink-400 bg-white/80" />
-        </div>
-
-        {/* 価格 */}
-        <div className="space-y-2">
-          <label className="block text-base font-bold text-gray-700">販売価格 (¥)</label>
-          <input type="number" value={price} onChange={(e) => setPrice(e.target.value)}
-            className="w-full border-2 border-gray-200 p-3 rounded-xl outline-none focus:border-yellow-400 bg-white/80" required />
-        </div>
-
-        <div className="pt-4 space-y-4">
-          <button type="submit" disabled={uploading}
-            className="w-full bg-gradient-to-r from-pink-500 via-red-500 to-yellow-400 text-white py-4 rounded-2xl font-black text-lg shadow-xl hover:scale-[1.02] transition active:scale-95 disabled:bg-gray-400">
-            {uploading ? "処理中..." : "出品する"}
-          </button>
-
-          {/* ✨ フォーム下のキャンセルボタン */}
-          <button 
-            type="button"
-            onClick={() => navigate(-1)}
-            className="w-full text-gray-500 font-bold hover:text-gray-700 transition py-2"
-          >
-            キャンセルして戻る
-          </button>
-        </div>
-      </form>
+      <button onClick={handleSubmit} style={{ marginTop: '20px', padding: '10px 20px' }}>出品する</button>
     </div>
   );
 };
