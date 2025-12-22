@@ -17,6 +17,14 @@ const Chat = () => {
   
   const { currentUser } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
+
+  // デバッグ用: 受信データやIDを可視化
+  useEffect(() => {
+    console.log('[messages]', messages);
+    console.log('[currentUser?.uid]', currentUser?.uid);
+    console.log('[receiverId]', receiverId);
+    console.log('[productId]', productId);
+  }, [messages, currentUser?.uid, receiverId, productId]);
   const [newMessage, setNewMessage] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -73,12 +81,14 @@ const Chat = () => {
     if (!newMessage.trim()) return;
 
     try {
-      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/messages`, {
+      const payload = {
         product_id: Number(productId),
         sender_id: currentUser?.uid,
         receiver_id: receiverId,
         content: newMessage
-      });
+      };
+      console.log('[送信payload]', payload);
+      await axios.post(`${import.meta.env.VITE_API_BASE_URL}/api/messages`, payload);
       setNewMessage('');
       fetchMessages();
     } catch (err: any) {
