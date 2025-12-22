@@ -27,14 +27,39 @@ const MessagesTab = ({ latestMessages, sellingProducts, likedProducts }: { lates
     if (!grouped[key]) grouped[key] = [];
     grouped[key].push(m);
   });
+  // 商品情報がなければAPIで個別取得して補完
+  const [productInfoMap, setProductInfoMap] = useState<{ [id: number]: any }>({});
+  useEffect(() => {
+    const fetchMissingProducts = async () => {
+      const ids = Array.from(new Set(latestMessages?.map((m: any) => m.product_id)));
+      for (const id of ids) {
+        if (
+          productInfoMap[id] ||
+          sellingProducts?.some((p: any) => p.id === id) ||
+          likedProducts?.some((p: any) => p.id === id)
+        ) continue;
+        try {
+          const res = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/api/products/${id}`);
+          setProductInfoMap(prev => ({ ...prev, [id]: res.data }));
+        } catch {}
+      }
+    };
+    fetchMissingProducts();
+    // eslint-disable-next-line
+  }, [latestMessages, sellingProducts, likedProducts]);
+
   return (
     <>
       {Object.entries(grouped).map(([key, msgs]) => {
         const m = msgs[0]; // 代表メッセージ
-        const product = sellingProducts?.find((p: any) => p.id === m.product_id) || likedProducts?.find((p: any) => p.id === m.product_id) || {};
+        let product = sellingProducts?.find((p: any) => p.id === m.product_id) || likedProducts?.find((p: any) => p.id === m.product_id);
+        let productInfo = productInfoMap[m.product_id] || {};
+        if (!product) product = productInfo;
+        // 画像はAPI補完分があればそちらを優先
+        const imageUrl = productInfo.image_url || product.image_url || 'https://via.placeholder.com/80';
         return (
           <div key={key} className="flex gap-5 p-4 border-2 border-gray-100 rounded-2xl bg-white shadow hover:bg-gray-50 cursor-pointer transition items-center">
-            <img src={product.image_url || 'https://via.placeholder.com/80'} className="w-16 h-16 object-cover rounded-xl border-2 border-pink-100 shadow" alt="product" />
+            <img src={imageUrl} className="w-16 h-16 object-cover rounded-xl border-2 border-pink-100 shadow" alt="product" />
             <div className="flex-1 min-w-0">
               <h3 className="font-bold text-base text-gray-800 truncate">{product.title || `商品ID: ${m.product_id}`}</h3>
               <p className="text-xs text-gray-400 mb-1 truncate">{msgs.length}件のやりとり</p>
@@ -102,11 +127,14 @@ const Profile = () => {
         {/* コンテンツ表示エリア */}
         <div className="space-y-5">
           {activeTab === 'selling' && data.selling_products?.map((p: any) => (
-            <div key={p.id} className="flex gap-5 p-4 border-2 border-pink-100 rounded-2xl items-center bg-white shadow hover:scale-[1.02] transition">
-              <img src={p.image_url} className="w-20 h-20 object-cover rounded-xl border-2 border-pink-200 shadow" alt="product" />
+            <div key={p.id} className={`flex gap-5 p-4 border-2 rounded-2xl items-center bg-white shadow hover:scale-[1.02] transition ${p.is_sold ? 'border-gray-300 opacity-60' : 'border-pink-100'}`}>
+              <img src={p.image_url} className={`w-20 h-20 object-cover rounded-xl border-2 shadow ${p.is_sold ? 'border-gray-300' : 'border-pink-200'}`} alt="product" />
               <div className="flex-1">
-                <h3 className="font-bold text-lg text-gray-800">{p.title}</h3>
-                <p className="text-base text-red-500 font-bold">¥{p.price}</p>
+                <h3 className="font-bold text-lg text-gray-800 flex items-center gap-2">
+                  {p.title}
+                  {p.is_sold && <span className="bg-gray-400 text-white text-xs font-bold px-2 py-1 rounded ml-2">売り切れ</span>}
+                </h3>
+                <p className={`text-base font-bold ${p.is_sold ? 'text-gray-400 line-through' : 'text-red-500'}`}>¥{p.price}</p>
               </div>
               <div className="flex flex-col items-center justify-center min-w-[90px]">
                 <span className="text-xl">❤️</span>
@@ -116,12 +144,17 @@ const Profile = () => {
           ))}
 
           {activeTab === 'liked' && data.liked_products?.map((p: any) => (
-            <div key={p.id} className="flex gap-5 p-4 border-2 border-yellow-100 rounded-2xl items-center bg-white shadow hover:scale-[1.02] transition">
-              <img src={p.image_url} className="w-20 h-20 object-cover rounded-xl border-2 border-yellow-200 shadow" alt="liked" />
+            <div key={p.id} className={`flex gap-5 p-4 border-2 rounded-2xl items-center bg-white shadow hover:scale-[1.02] transition ${p.is_sold ? 'border-gray-300 opacity-60' : 'border-yellow-100'}`}>
+              <img src={p.image_url} className={`w-20 h-20 object-cover rounded-xl border-2 shadow ${p.is_sold ? 'border-gray-300' : 'border-yellow-200'}`} alt="liked" />
               <div className="flex-1">
-                <h3 className="font-bold text-lg text-gray-800">{p.title}</h3>
+                <h3 className="font-bold text-lg text-gray-800 flex items-center gap-2">
+                  {p.title}
+                  {p.is_sold && <span className="bg-gray-400 text-white text-xs font-bold px-2 py-1 rounded ml-2">売り切れ</span>}
+                </h3>
               </div>
-              <Link to={`/purchase/${p.id}`} className="bg-gradient-to-r from-orange-400 to-yellow-400 text-white px-5 py-2 rounded-xl text-sm font-bold shadow hover:scale-105 transition">購入へ</Link>
+              {!p.is_sold && (
+                <Link to={`/purchase/${p.id}`} className="bg-gradient-to-r from-orange-400 to-yellow-400 text-white px-5 py-2 rounded-xl text-sm font-bold shadow hover:scale-105 transition">購入へ</Link>
+              )}
             </div>
           ))}
 
