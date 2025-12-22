@@ -16,22 +16,20 @@ const PrivateRoute = ({ children }: { children: JSX.Element }) => {
 };
 
 function App() {
+  console.log("App.tsx が読み込まれました"); // ← これを追加
+
   return (
     <BrowserRouter>
       <Routes>
-        {/* 誰でもアクセス可能 */}
+        {/* 1. 一時的にガードを外して Home を一番上に置く */}
+        <Route path="/" element={<Home />} /> 
+        
+        {/* 2. ログイン画面もガードなしで置く */}
         <Route path="/login" element={<Login />} />
 
-        {/* ログイン必須の画面 */}
-        <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
+        {/* 既存のルートは一旦そのままでもOK */}
         <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
-        <Route path="/sell" element={<PrivateRoute><Sell /></PrivateRoute>} />
-        {/* :productId は動的なIDを受け取る設定 */}
-        <Route path="/purchase/:productId" element={<PrivateRoute><Purchase /></PrivateRoute>} />
-        <Route path="/chat/:productId" element={<PrivateRoute><Chat /></PrivateRoute>} />
-
-        {/* それ以外はホームへ飛ばす */}
-        <Route path="*" element={<Navigate to="/" />} />
+        {/* ... */}
       </Routes>
     </BrowserRouter>
   );
