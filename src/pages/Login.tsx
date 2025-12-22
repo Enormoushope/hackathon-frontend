@@ -23,7 +23,7 @@ const Login = () => {
       });
 
       // 3. ホーム画面へ
-      navigate('/');
+      navigate('/home');
     } catch (error) {
       console.error("Login Error:", error);
       alert("ログインに失敗しました");
