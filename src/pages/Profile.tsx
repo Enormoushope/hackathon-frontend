@@ -60,8 +60,10 @@ const Profile = () => {
                 <h3 className="font-bold text-lg text-gray-800">{p.title}</h3>
                 <p className="text-base text-red-500 font-bold">¥{p.price}</p>
               </div>
-              {/* この商品に紐づくDMを確認するボタン */}
-              <Link to={`/chat/${p.id}`} className="text-blue-600 text-sm font-bold bg-blue-50 px-4 py-2 rounded-xl shadow hover:bg-blue-100 transition">DMを見る</Link>
+              <div className="flex flex-col items-center justify-center min-w-[90px]">
+                <span className="text-xl">❤️</span>
+                <span className="text-yellow-700 font-semibold text-sm">{p.like_count ?? 0} いいね</span>
+              </div>
             </div>
           ))}
 

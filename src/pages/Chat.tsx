@@ -30,23 +30,25 @@ const Chat = () => {
           user2: receiverId
         }
       });
-      if (!Array.isArray(res.data)) {
-        throw new Error('サーバーからのレスポンス形式が不正です');
+      // nullや配列以外が返ってきても空配列として扱う
+      if (!res.data) {
+        setMessages([]);
+      } else if (Array.isArray(res.data)) {
+        setMessages(res.data);
+      } else {
+        // オブジェクトやその他の場合も空配列
+        setMessages([]);
       }
-      setMessages(res.data || []);
     } catch (err: any) {
       let msg = '[チャット履歴取得エラー] ';
       if (err.response) {
-        // サーバーからエラー応答
         msg += `サーバー応答エラー: ${err.response.status} ${err.response.statusText}\n`;
         if (err.response.data && err.response.data.error) {
           msg += `詳細: ${err.response.data.error}`;
         }
       } else if (err.request) {
-        // 通信自体の失敗
         msg += 'サーバーに接続できませんでした。通信環境をご確認ください。';
       } else if (err instanceof Error) {
-        // その他JSエラー
         msg += err.message;
       } else {
         msg += String(err);

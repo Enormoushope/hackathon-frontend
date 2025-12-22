@@ -72,12 +72,21 @@ const Purchase = () => {
             </div>
 
             <div className="flex gap-3 mt-4">
-              {product.is_sold ? (
+              {product.seller_id === currentUser?.uid ? (
+                <div className="flex-1 bg-yellow-100 py-4 rounded-2xl text-yellow-700 font-black text-lg shadow-xl flex flex-col items-center justify-center border-2 border-yellow-300">
+                  <div>自分の商品です</div>
+                  <div className="mt-2 text-sm text-yellow-700 font-semibold flex items-center gap-1">
+                    <span className="text-xl">❤️</span> {product.like_count ?? 0} いいね
+                  </div>
+                </div>
+              ) : product.is_sold ? (
                 <button disabled className="flex-1 bg-gray-400 py-4 rounded-2xl text-white font-black text-lg shadow-xl cursor-not-allowed">SOLD OUT</button>
               ) : (
                 <button onClick={handlePurchase} className="flex-1 bg-gradient-to-r from-pink-500 via-red-500 to-yellow-400 py-4 rounded-2xl text-white font-black text-lg shadow-xl hover:scale-105 transition">購入する</button>
               )}
-              <Link to={`/chat/${product.id}?receiver=${product.seller_id}`} className="bg-gray-100 px-6 py-4 rounded-2xl font-bold text-gray-700 shadow hover:bg-gray-200 transition flex items-center">質問</Link>
+              {product.seller_id !== currentUser?.uid && (
+                <Link to={`/chat/${product.id}?receiver=${product.seller_id}`} className="bg-gray-100 px-6 py-4 rounded-2xl font-bold text-gray-700 shadow hover:bg-gray-200 transition flex items-center">質問</Link>
+              )}
             </div>
           </div>
         </div>
