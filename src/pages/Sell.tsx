@@ -50,7 +50,7 @@ const Sell = () => {
     }
     setIsGenerating(true);
     try {
-      const response = await fetch('/api/ai/description', { // あなたのAPIパスに合わせてください
+      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/ai/description`, { // あなたのAPIパスに合わせてください
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -79,7 +79,8 @@ const Sell = () => {
       image_url: base64Image, // DBのimage_urlカラムにBase64をそのまま保存
     };
     
-    const res = await fetch('/api/products', {
+    
+    const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/products`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
