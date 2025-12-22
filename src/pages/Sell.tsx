@@ -15,8 +15,9 @@ const Sell = () => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = (event) => {
+      const result = (event.target as FileReader).result as string;
       const img = new Image();
-      img.src = event.target.result as string;
+      img.src = result;
       img.onload = () => {
         const canvas = document.createElement('canvas');
         const MAX_WIDTH = 800; // ここでサイズを制限（1MB以下に抑えるコツ）
