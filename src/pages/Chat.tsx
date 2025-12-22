@@ -5,7 +5,9 @@ import axios from 'axios';
 
 interface Message {
   id: number;
+  product_id: number;
   sender_id: string;
+  receiver_id: string;
   content: string;
   created_at: string;
 }

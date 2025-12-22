@@ -71,6 +71,12 @@ const Purchase = () => {
               <p className="text-sm mt-1 min-h-[1.5em]">{loadingAI ? <span className="animate-pulse text-gray-400">査定中...</span> : aiAnalysis}</p>
             </div>
 
+            {/* 商品説明欄 */}
+            <div className="bg-white/80 border-2 border-pink-100 rounded-2xl p-5 shadow-inner">
+              <h2 className="text-base font-bold text-pink-600 mb-2">商品説明</h2>
+              <p className="text-gray-700 whitespace-pre-line break-words">{product.description}</p>
+            </div>
+
             <div className="flex gap-3 mt-4">
               {product.seller_id === currentUser?.uid ? (
                 <div className="flex-1 bg-yellow-100 py-4 rounded-2xl text-yellow-700 font-black text-lg shadow-xl flex flex-col items-center justify-center border-2 border-yellow-300">
